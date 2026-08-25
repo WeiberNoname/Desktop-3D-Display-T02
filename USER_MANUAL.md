@@ -12,7 +12,7 @@ Desktop Pet is a floating, borderless, fully transparent (RGBA 0,0,0,0) 3D inter
 - **Transparent Click-Through**: Captures clicks and drags directly on the character while passing clicks straight through to underlying applications in transparent areas.
 - **3D Model Drag-and-Drop**: Load custom `.glb` and `.gltf` 3D assets instantly by dragging them onto the window canvas.
 - **First-Person Perspective (FPS) Mode**: 360-degree pointer lock camera aiming with WASD flight controls.
-- **Multi-Source Stage Spotlights**: Control up to 4 dynamic 3D spotlights with custom colors, angles, and dark stage presets.
+- **Multi-Source Stage Spotlights**: Control up to 10 dynamic 3D spotlights with custom colors, angles, and dark stage presets.
 - **Physics Engine**: Throw the mascot across the screen with gravity, momentum, and ground landing colliders.
 - **12 Core International Languages**: Instant live dynamic language switching across all studio tabs and settings controls (with automatic English fallback for unlisted system locales).
 
@@ -72,7 +72,7 @@ The Settings Panel is divided into 6 categorized studio tabs:
 
 1. **🎯 Display**: Active mascot selector, preview thumbnail generator grid, animation selector, window width/height, and model scale sliders.
 2. **🌀 Motion**: Idle bobbing, position locking, view-only mode, Dynamic Battery Saver (auto-throttles FPS when idle/unfocused), GPU & mouse optimizations, X/Y/Z axis spinning controls.
-3. **🔦 Lighting**: Multi-source stage spotlight controls (up to 4 lights), master ambient light dimmer, Dark Stage Mode, and Dual Concert presets.
+3. **🔦 Lighting**: Multi-source stage spotlight controls (up to 10 lights), master ambient light dimmer, Dark Stage Mode, and Dual Concert presets.
 4. **⚡ Physics**: Enable physics engine, gravity slider, bounciness elasticity, ground landing collider, and momentum throw info.
 5. **🎥 Camera**: First-person camera mode toggle, spatial XYZ coordinate HUD overlay, 3D ground reference grid, viewport controls.
 6. **⚙️ System**: Language selector (12 core locales), UI font scale slider, settings icon placement toggle, collapsible diagnostic log console, and Steam stats reset button.

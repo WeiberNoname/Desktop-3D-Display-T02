@@ -11,11 +11,13 @@ assert.strictEqual(defaults.width, 350, 'Default width should be 350');
 assert.strictEqual(defaults.height, 350, 'Default height should be 350');
 assert.strictEqual(defaults.targetFps, 60, 'Default targetFps should be 60');
 assert.strictEqual(defaults.language, 'en', 'Default language should be en');
+assert.strictEqual(defaults.activeModel, 'procedural', 'Default activeModel should be procedural');
 
 const merged = SettingsManager.mergeWithDefaults({ scale: 2.5, targetFps: 120, customKey: 'test' });
 assert.strictEqual(merged.scale, 2.5, 'Scale should be overridden to 2.5');
 assert.strictEqual(merged.targetFps, 120, 'targetFps should be overridden to 120');
 assert.strictEqual(merged.width, 350, 'Unspecified width should fallback to 350');
+assert.strictEqual(merged.activeModel, 'procedural', 'Fallback activeModel should be procedural');
 console.log('✅ SettingsManager tests PASSED.');
 
 // 2. Test PhysicsEngine
@@ -35,4 +37,24 @@ assert.strictEqual(engine.position.y, 0, 'Reset position Y should be 0');
 assert.strictEqual(engine.velocity.y, 0, 'Reset velocity Y should be 0');
 console.log('✅ PhysicsEngine tests PASSED.');
 
-console.log('\n🎉 ALL 2 UNIT TEST SUITES PASSED CLEANLY (100% SUCCESS)');
+// 3. Test 12-Locale Key Parity & default_mascot key
+console.log('▶ Testing 12-Locale Key Parity & default_mascot translations...');
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const localesDir = path.join(__dirname, '..', 'locales');
+const supportedLangs = ['en', 'zh-CN', 'zh-TW', 'ja', 'ko', 'fr', 'de', 'es', 'es-419', 'it', 'pt-BR', 'ru'];
+
+supportedLangs.forEach(lang => {
+  const filePath = path.join(localesDir, lang, 'translation.json');
+  assert.strictEqual(fs.existsSync(filePath), true, `Translation file for ${lang} must exist`);
+  const content = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  assert.strictEqual(typeof content.default_mascot, 'string', `${lang} must contain default_mascot translation`);
+  assert.strictEqual(content.default_mascot.length > 0, true, `${lang} default_mascot must not be empty`);
+});
+console.log('✅ 12-Locale Key Parity tests PASSED.');
+
+console.log('\n🎉 ALL 3 UNIT TEST SUITES PASSED CLEANLY (100% SUCCESS)');

@@ -1,6 +1,7 @@
 /**
  * Settings Panel Edge Resize Handler Module
  * Enables real-time drag-to-resize window behavior when hovering and dragging the edges/corners of the settings panel.
+ * Uses requestAnimationFrame throttling and direction-aware edge updates for zero-lag smooth 60fps resizing.
  */
 
 export function setupSettingsPanelResize(deps) {
@@ -18,10 +19,15 @@ export function setupSettingsPanelResize(deps) {
 
   if (!panel) return null;
 
+  let resizePending = false;
+  let latestW = currentSettings.width || 350;
+  let latestH = currentSettings.height || 350;
+  let latestEdge = null;
+
   const detectEdge = (e) => {
     if (!state || !state.isSettingsOpen) return null;
     const rect = panel.getBoundingClientRect();
-    const margin = 10; // 10px hit region along outer/inner edges of panel
+    const margin = 12; // 12px hit region for smooth, forgiving edge grab
     const nearLeft = Math.abs(e.clientX - rect.left) <= margin;
     const nearRight = Math.abs(e.clientX - rect.right) <= margin;
     const nearTop = Math.abs(e.clientY - rect.top) <= margin;
@@ -48,6 +54,28 @@ export function setupSettingsPanelResize(deps) {
     }
   };
 
+  const applyResize = () => {
+    if (!state || !state.isResizingPanel) {
+      resizePending = false;
+      return;
+    }
+
+    const activeCamera = deps.camera || (deps.getCamera ? deps.getCamera() : null);
+    const activeRenderer = deps.renderer || (deps.getRenderer ? deps.getRenderer() : null);
+
+    if (activeCamera && activeRenderer) {
+      activeCamera.aspect = latestW / latestH;
+      activeCamera.updateProjectionMatrix();
+      activeRenderer.setSize(latestW, latestH);
+    }
+
+    if (ipcRenderer) {
+      ipcRenderer.send('resize-window', { width: latestW, height: latestH, edge: latestEdge });
+    }
+
+    resizePending = false;
+  };
+
   window.addEventListener('mousemove', (e) => {
     if (!state || !state.isSettingsOpen) return;
 
@@ -71,23 +99,18 @@ export function setupSettingsPanelResize(deps) {
 
       currentSettings.width = newW;
       currentSettings.height = newH;
+      latestW = newW;
+      latestH = newH;
+      latestEdge = edge;
 
       if (widthSlider) widthSlider.value = newW;
       if (valWidth) valWidth.innerText = newW;
       if (heightSlider) heightSlider.value = newH;
       if (valHeight) valHeight.innerText = newH;
 
-      const activeCamera = deps.camera || (deps.getCamera ? deps.getCamera() : null);
-      const activeRenderer = deps.renderer || (deps.getRenderer ? deps.getRenderer() : null);
-
-      if (activeCamera && activeRenderer) {
-        activeCamera.aspect = newW / newH;
-        activeCamera.updateProjectionMatrix();
-        activeRenderer.setSize(newW, newH);
-      }
-
-      if (ipcRenderer) {
-        ipcRenderer.send('resize-window', { width: newW, height: newH });
+      if (!resizePending) {
+        resizePending = true;
+        requestAnimationFrame(applyResize);
       }
       return;
     }
@@ -105,7 +128,7 @@ export function setupSettingsPanelResize(deps) {
         }
       }
     }
-  });
+  }, { passive: true });
 
   panel.addEventListener('mousedown', (e) => {
     if (e.button !== 0 || !state || !state.isSettingsOpen) return;
@@ -119,6 +142,9 @@ export function setupSettingsPanelResize(deps) {
       state.resizeStartMouseY = e.screenY;
       state.resizeStartWidth = currentSettings.width || window.innerWidth;
       state.resizeStartHeight = currentSettings.height || window.innerHeight;
+      latestW = state.resizeStartWidth;
+      latestH = state.resizeStartHeight;
+      latestEdge = edge;
       panel.classList.add('resizing');
       const cursor = getCursorForEdge(edge);
       document.body.style.cursor = cursor;

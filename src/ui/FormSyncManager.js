@@ -60,10 +60,13 @@ export function createFormSyncManager(deps) {
   const populateAnimationDropdown = () => {
     const animSelect = document.getElementById('anim-select');
     const modelSelect = document.getElementById('model-select');
+    const clips = typeof deps.getAvailableAnimations === 'function'
+      ? deps.getAvailableAnimations()
+      : (deps.availableAnimations || []);
     populateAnimationDropdownUtil({
       animSelect,
       modelSelect,
-      availableAnimations,
+      availableAnimations: clips,
       currentSettings
     });
   };

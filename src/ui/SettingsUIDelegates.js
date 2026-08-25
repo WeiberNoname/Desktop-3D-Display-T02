@@ -22,6 +22,11 @@ export function createSettingsUIDelegates(deps) {
     handleSaveSettings,
     resetCameraAndPosition,
     updateIgnoreMouseState,
+    applySelectedAnimation,
+    fallbackToProcedural,
+    loadCustomModel,
+    getAssetsPath,
+    path,
     stateAccessors
   } = deps;
 
@@ -44,6 +49,11 @@ export function createSettingsUIDelegates(deps) {
         handleSaveSettings,
         resetCameraAndPosition,
         updateIgnoreMouseState,
+        applySelectedAnimation,
+        fallbackToProcedural,
+        loadCustomModel,
+        getAssetsPath,
+        path,
         state: stateAccessors
       });
     }

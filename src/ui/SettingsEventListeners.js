@@ -83,14 +83,14 @@ export function setupSettingsUI(deps) {
   if (addSpotlightBtn) {
     addSpotlightBtn.addEventListener('click', () => {
       if (!Array.isArray(currentSettings.spotlights)) currentSettings.spotlights = [];
-      if (currentSettings.spotlights.length >= 4) {
+      if (currentSettings.spotlights.length >= 10) {
         if (showSpeechBubble) showSpeechBubble(t('max_spotlights_reached'), 2000);
         return;
       }
       const nextNum = currentSettings.spotlights.length + 1;
-      const defaultColors = ['#ffffff', '#ffb703', '#00f0ff', '#ff007f'];
+      const defaultColors = ['#ffffff', '#ffb703', '#00f0ff', '#ff007f', '#a855f7', '#22c55e', '#ef4444', '#3b82f6', '#eab308', '#ec4899'];
       const nextColor = defaultColors[(nextNum - 1) % defaultColors.length];
-      const defaultAngles = [45, -135, -45, 135];
+      const defaultAngles = [45, -135, -45, 135, 0, 90, -90, 180, 60, -120];
       const nextAngleH = defaultAngles[(nextNum - 1) % defaultAngles.length];
 
       currentSettings.spotlights.push({
@@ -171,14 +171,29 @@ export function setupSettingsUI(deps) {
 
   if (modelSelect) {
     modelSelect.addEventListener('change', () => {
-      if (modelSelect.value === 'procedural') {
+      const newModel = modelSelect.value;
+      if (newModel !== currentSettings.activeModel) {
+        currentSettings.activeModel = newModel;
+        currentSettings.activeAnimation = 'default';
+        if (saveSettingsFile) saveSettingsFile();
+
+        if (newModel === 'procedural') {
+          if (deps.fallbackToProcedural) deps.fallbackToProcedural();
+        } else if (deps.getAssetsPath && deps.loadCustomModel && deps.path) {
+          const fullPath = deps.path.join(deps.getAssetsPath(), newModel);
+          deps.loadCustomModel(fullPath);
+        }
+      } else {
         if (populateAnimationDropdown) populateAnimationDropdown();
-      } else if (animSelect) {
-        animSelect.innerHTML = '<option value="default">Default (Load on Save)</option>';
-        animSelect.disabled = true;
-        const container = document.getElementById('anim-select-container');
-        if (container) container.style.opacity = '0.7';
       }
+    });
+  }
+
+  if (animSelect) {
+    animSelect.addEventListener('change', () => {
+      currentSettings.activeAnimation = animSelect.value;
+      if (deps.applySelectedAnimation) deps.applySelectedAnimation();
+      if (saveSettingsFile) saveSettingsFile();
     });
   }
 

@@ -7,10 +7,20 @@ export function populateAnimationDropdown({ animSelect, modelSelect, availableAn
   const container = document.getElementById('anim-select-container');
   if (!animSelect) return;
 
-  if (modelSelect && modelSelect.value === 'procedural') {
+  const currentModel = modelSelect ? modelSelect.value : currentSettings.activeModel;
+
+  if (currentModel === 'procedural') {
     animSelect.innerHTML = '<option value="none">Procedural (Default Loop)</option>';
     animSelect.disabled = true;
     if (container) container.style.opacity = '0.5';
+    return;
+  }
+
+  const clips = availableAnimations || [];
+  if (clips.length === 0) {
+    animSelect.innerHTML = '<option value="none">No Animation Clips Found</option>';
+    animSelect.disabled = true;
+    if (container) container.style.opacity = '0.6';
     return;
   }
 
@@ -18,7 +28,6 @@ export function populateAnimationDropdown({ animSelect, modelSelect, availableAn
   if (container) container.style.opacity = '1.0';
   animSelect.innerHTML = '<option value="none">None (Static Pose)</option>';
 
-  const clips = availableAnimations || [];
   clips.forEach((clipName, idx) => {
     const option = document.createElement('option');
     const val = clipName || String(idx);
@@ -27,10 +36,13 @@ export function populateAnimationDropdown({ animSelect, modelSelect, availableAn
     animSelect.appendChild(option);
   });
 
-  if (currentSettings.activeAnimation === 'default') {
-    animSelect.value = clips.length > 0 ? (clips[0] || '0') : 'none';
+  if (currentSettings.activeAnimation === 'none') {
+    animSelect.value = 'none';
+  } else if (!currentSettings.activeAnimation || currentSettings.activeAnimation === 'default') {
+    animSelect.value = clips[0] || 'none';
   } else {
-    animSelect.value = clips.includes(currentSettings.activeAnimation) ? currentSettings.activeAnimation : 'none';
+    const exists = Array.from(animSelect.options).some(opt => opt.value === currentSettings.activeAnimation);
+    animSelect.value = exists ? currentSettings.activeAnimation : (clips[0] || 'none');
   }
 }
 

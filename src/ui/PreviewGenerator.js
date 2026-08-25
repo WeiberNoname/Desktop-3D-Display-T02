@@ -2,16 +2,50 @@
  * Mascot Preview & Thumbnail Generator Module
  * Handles synchronous canvas snapshot preview generation,
  * background offscreen preview queuing, mascot grid card DOM population,
- * and preview thumbnail cache clearing.
+ * localized card titles, and preview thumbnail cache clearing.
  */
 
+import { createProceduralMascot } from '../core/MascotBuilder.js';
+
+export const DEFAULT_FALLBACK_ICON = "data:image/svg+xml;utf8," + encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1c1c22"/>
+      <stop offset="100%" stop-color="#0e0e12"/>
+    </linearGradient>
+    <linearGradient id="triGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2.5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <rect width="120" height="120" rx="8" fill="url(#bgGrad)"/>
+  <rect width="118" height="118" x="1" y="1" rx="7" fill="none" stroke="rgba(251,191,36,0.18)" stroke-width="1"/>
+  <path d="M 60 18 L 100 86 C 101.5 88.5 99.8 92 96.8 92 L 23.2 92 C 20.2 92 18.5 88.5 20 86 Z" 
+        fill="rgba(245, 158, 11, 0.08)" 
+        stroke="url(#triGrad)" 
+        stroke-width="3.5" 
+        stroke-linejoin="round"
+        filter="url(#glow)"/>
+  <g>
+    <animate attributeName="opacity" values="1;0.05;1" dur="1.1s" repeatCount="indefinite" />
+    <line x1="60" y1="40" x2="60" y2="66" stroke="#fbbf24" stroke-width="4.5" stroke-linecap="round"/>
+    <circle cx="60" cy="77" r="2.8" fill="#fbbf24"/>
+  </g>
+  <text x="60" y="108" font-family="Consolas, Monaco, sans-serif" font-size="8" font-weight="bold" fill="#f59e0b" text-anchor="middle" letter-spacing="0.8">GENERATING...</text>
+</svg>`.trim());
+
 /**
- * Generates a PNG thumbnail preview for a specific model key from active scene renderer canvas.
+ * Generates a PNG thumbnail preview for a specific model key from isolated renderer canvas.
  * @param {Object} ctx - Context dependencies.
  * @param {string} modelKey - Active model filename or 'procedural'.
  */
 export function generateModelPreview(ctx, modelKey) {
-  const { fs, path, getAssetsPath, renderer, scene, camera, callbacks } = ctx;
+  const { fs, path, getAssetsPath, callbacks } = ctx;
   const assetsDir = getAssetsPath();
   const previewsDir = path.join(assetsDir, '.previews');
 
@@ -25,21 +59,10 @@ export function generateModelPreview(ctx, modelKey) {
   const previewPath = path.join(previewsDir, `${modelKey}.png`);
   if (fs.existsSync(previewPath)) return;
 
-  if (renderer && scene && camera) {
-    renderer.render(scene, camera);
-  }
+  generateMascotPreviewInBackground(ctx, modelKey);
 
-  try {
-    const dataUrl = renderer.domElement.toDataURL("image/png");
-    const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
-    fs.writeFileSync(previewPath, base64Data, 'base64');
-    console.log(`Generated thumbnail preview for: ${modelKey}`);
-
-    if (callbacks && callbacks.populateModelDropdown) {
-      callbacks.populateModelDropdown();
-    }
-  } catch (e) {
-    console.warn("Failed to save model preview thumbnail:", e);
+  if (callbacks && callbacks.populateModelDropdown) {
+    callbacks.populateModelDropdown();
   }
 }
 
@@ -48,7 +71,7 @@ export function generateModelPreview(ctx, modelKey) {
  * @param {Object} ctx - Context dependencies.
  */
 export function populateModelDropdown(ctx) {
-  const { fs, path, pathToFileURL, getAssetsPath, currentSettings, callbacks, state } = ctx;
+  const { fs, path, pathToFileURL, getAssetsPath, currentSettings, callbacks, state, t } = ctx;
   if (callbacks && callbacks.scanForModels) {
     callbacks.scanForModels();
   }
@@ -78,17 +101,20 @@ export function populateModelDropdown(ctx) {
     if (fs.existsSync(previewPath)) {
       img.src = pathToFileURL(previewPath).href + "?t=" + Date.now();
     } else {
-      img.src = './assets/bunny_icon.png';
+      img.src = DEFAULT_FALLBACK_ICON;
     }
 
     const label = document.createElement('div');
     label.className = 'mascot-card-label';
-    label.textContent = modelKey === 'procedural' ? 'Pink Bunny' : modelKey.replace(/\.(glb|gltf)$/i, '');
+    const isProcedural = modelKey === 'procedural';
+    const defaultLabel = (typeof t === 'function') ? t('default_mascot') : 'Default';
+    label.textContent = isProcedural ? defaultLabel : modelKey.replace(/\.(glb|gltf)$/i, '');
 
     card.appendChild(img);
     card.appendChild(label);
 
     card.addEventListener('click', () => {
+      if (currentSettings.activeModel === modelKey) return;
       gridContainer.querySelectorAll('.mascot-card').forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
 
@@ -137,12 +163,12 @@ export function startBackgroundPreviewGenerator(ctx) {
 
       const nextModel = queue.shift();
       generateMascotPreviewInBackground(ctx, nextModel);
-    }, 2000);
+    }, 1000);
   }
 }
 
 /**
- * Generates preview snapshot PNG offscreen for procedural or custom model.
+ * Generates preview snapshot PNG offscreen in an isolated Three.js context.
  * @param {Object} ctx - Context dependencies.
  * @param {string} modelKey - Model key string.
  */
@@ -150,15 +176,14 @@ export function generateMascotPreviewInBackground(ctx, modelKey) {
   const {
     THREE,
     GLTFLoader,
-    scene,
-    camera,
     renderer,
     fs,
     path,
     pathToFileURL,
-    getAssetsPath,
-    state
+    getAssetsPath
   } = ctx;
+
+  if (!renderer || !THREE) return;
 
   const assetsDir = getAssetsPath();
   const previewsDir = path.join(assetsDir, '.previews');
@@ -166,77 +191,34 @@ export function generateMascotPreviewInBackground(ctx, modelKey) {
 
   if (fs.existsSync(previewPath)) return;
 
-  const characterGroup = state.getCharacterGroup ? state.getCharacterGroup() : null;
-  const originalVisible = characterGroup ? characterGroup.visible : true;
-
   if (modelKey === 'procedural') {
-    if (characterGroup) characterGroup.visible = false;
+    const previewScene = new THREE.Scene();
+    const previewCamera = new THREE.PerspectiveCamera(45, 1.0, 0.1, 100);
+    previewCamera.position.set(0, 0, 5.5);
+    previewCamera.lookAt(0, 0, 0);
 
-    const tempGroup = new THREE.Group();
-    scene.add(tempGroup);
+    const ambLight = new THREE.AmbientLight(0xffffff, 0.9);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    dirLight.position.set(3, 4, 5);
+    previewScene.add(ambLight);
+    previewScene.add(dirLight);
 
-    const bodyGeom = new THREE.SphereGeometry(0.7, 32, 32);
-    const bodyMat = new THREE.MeshLambertMaterial({ color: 0xff7597 });
-    const body = new THREE.Mesh(bodyGeom, bodyMat);
-    tempGroup.add(body);
-
-    const eyeGeom = new THREE.SphereGeometry(0.08, 16, 16);
-    const eyeMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
-    const leftEye = new THREE.Mesh(eyeGeom, eyeMat);
-    leftEye.position.set(0.2, 0.25, 0.55);
-    tempGroup.add(leftEye);
-    const rightEye = leftEye.clone();
-    rightEye.position.x = -0.2;
-    tempGroup.add(rightEye);
-
-    const earGeom = new THREE.BoxGeometry(0.18, 0.9, 0.12);
-    const leftEar = new THREE.Mesh(earGeom, bodyMat);
-    leftEar.position.set(0.3, 0.9, 0);
-    leftEar.rotation.z = -0.15;
-    tempGroup.add(leftEar);
-    const rightEar = leftEar.clone();
-    rightEar.position.x = -0.3;
-    rightEar.rotation.z = 0.15;
-    tempGroup.add(rightEar);
-
-    const noseGeom = new THREE.ConeGeometry(0.06, 0.08, 4);
-    const noseMat = new THREE.MeshBasicMaterial({ color: 0xffb7c5 });
-    const nose = new THREE.Mesh(noseGeom, noseMat);
-    nose.position.set(0, 0.08, 0.68);
-    nose.rotation.x = Math.PI;
-    tempGroup.add(nose);
-
-    const cheekGeom = new THREE.SphereGeometry(0.09, 16, 16);
-    const cheekMat = new THREE.MeshBasicMaterial({ color: 0xffa3b1 });
-    const leftCheek = new THREE.Mesh(cheekGeom, cheekMat);
-    leftCheek.position.set(0.35, 0.05, 0.55);
-    tempGroup.add(leftCheek);
-    const rightCheek = leftCheek.clone();
-    rightCheek.position.x = -0.35;
-    tempGroup.add(rightCheek);
-
-    tempGroup.rotation.y = 0.4;
-    tempGroup.rotation.x = 0.08;
-
-    renderer.render(scene, camera);
+    createProceduralMascot(THREE, previewScene);
 
     try {
+      renderer.render(previewScene, previewCamera);
       const dataUrl = renderer.domElement.toDataURL("image/png");
       const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
       fs.writeFileSync(previewPath, base64Data, 'base64');
-      console.log(`Generated background preview for: procedural`);
+      console.log(`Generated canonical preview for: procedural`);
 
       const imgEl = document.querySelector(`.mascot-thumbnail[data-mascot="procedural"]`);
       if (imgEl) {
         imgEl.src = pathToFileURL(previewPath).href + "?t=" + Date.now();
       }
     } catch (e) {
-      console.warn("Failed background capture for procedural bunny:", e);
+      console.warn("Failed background capture for procedural mascot:", e);
     }
-
-    scene.remove(tempGroup);
-    if (characterGroup) characterGroup.visible = originalVisible;
-
   } else {
     const filePath = path.join(assetsDir, modelKey);
     let fileUrl = filePath;
@@ -246,11 +228,18 @@ export function generateMascotPreviewInBackground(ctx, modelKey) {
 
     const loader = new GLTFLoader();
     loader.load(fileUrl, (gltf) => {
-      const tempModel = gltf.scene;
-      if (characterGroup) characterGroup.visible = false;
+      const previewScene = new THREE.Scene();
+      const previewCamera = new THREE.PerspectiveCamera(45, 1.0, 0.1, 100);
 
+      const ambLight = new THREE.AmbientLight(0xffffff, 0.9);
+      const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+      dirLight.position.set(3, 4, 5);
+      previewScene.add(ambLight);
+      previewScene.add(dirLight);
+
+      const tempModel = gltf.scene;
       const tempGroup = new THREE.Group();
-      scene.add(tempGroup);
+      previewScene.add(tempGroup);
 
       const box = new THREE.Box3().setFromObject(tempModel);
       const size = box.getSize(new THREE.Vector3());
@@ -264,20 +253,17 @@ export function generateMascotPreviewInBackground(ctx, modelKey) {
       innerGroup.position.y = - size.y * (padding - 1) / 2;
       tempGroup.add(innerGroup);
 
-      const origAspect = camera.aspect;
-      const origPos = camera.position.clone();
-
       const visibleHeight = size.y * padding;
-      const zPos = visibleHeight / (2 * Math.tan((camera.fov * Math.PI) / 360));
-      camera.position.set(0, 0, zPos + (size.z / 2));
-
-      renderer.render(scene, camera);
+      const zPos = visibleHeight / (2 * Math.tan((previewCamera.fov * Math.PI) / 360));
+      previewCamera.position.set(0, 0, zPos + (size.z / 2));
+      previewCamera.lookAt(0, 0, 0);
 
       try {
+        renderer.render(previewScene, previewCamera);
         const dataUrl = renderer.domElement.toDataURL("image/png");
         const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
         fs.writeFileSync(previewPath, base64Data, 'base64');
-        console.log(`Generated background preview for custom model: ${modelKey}`);
+        console.log(`Generated canonical preview for custom model: ${modelKey}`);
 
         const imgEl = document.querySelector(`.mascot-thumbnail[data-mascot="${modelKey}"]`);
         if (imgEl) {
@@ -286,13 +272,6 @@ export function generateMascotPreviewInBackground(ctx, modelKey) {
       } catch (e) {
         console.warn(`Failed background capture for custom model: ${modelKey}`, e);
       }
-
-      scene.remove(tempGroup);
-      camera.aspect = origAspect;
-      camera.position.copy(origPos);
-      camera.updateProjectionMatrix();
-      if (characterGroup) characterGroup.visible = originalVisible;
-
     }, undefined, (err) => {
       console.warn(`Failed to load ${modelKey} for background preview:`, err);
     });
@@ -321,7 +300,7 @@ export function forceRefreshAllPreviews(ctx) {
 
   const thumbnails = document.querySelectorAll('.mascot-thumbnail');
   thumbnails.forEach(img => {
-    img.src = './assets/bunny_icon.png';
+    img.src = DEFAULT_FALLBACK_ICON;
   });
 
   startBackgroundPreviewGenerator(ctx);

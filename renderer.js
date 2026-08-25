@@ -310,7 +310,10 @@ function getModelLoaderCtx() {
     },
     callbacks: {
       createMascot,
-      generateModelPreview
+      generateModelPreview,
+      populateAnimationDropdown: () => {
+        if (typeof populateAnimationDropdown === 'function') populateAnimationDropdown();
+      }
     }
   });
 }
@@ -372,6 +375,7 @@ function getPreviewGeneratorCtx() {
     getAssetsPath,
     currentSettings,
     ipcRenderer,
+    t,
     state: {
       discoveredModels,
       getCharacterGroup: () => characterGroup
@@ -397,7 +401,7 @@ const forceRefreshAllPreviews = modelDelegates.forceRefreshAllPreviews;
 function setupSettingsUI() {
   const { syncSlidersUI, populateAnimationDropdown, renderSpotlightCardsUI } = createFormSyncManager({
     currentSettings,
-    availableAnimations,
+    getAvailableAnimations: () => availableAnimations,
     syncSlidersUIUtil,
     populateAnimationDropdownUtil,
     renderSpotlightCardsUIUtil,
@@ -423,6 +427,11 @@ function setupSettingsUI() {
     forceRefreshAllPreviews,
     renderSpotlightCardsUI,
     setupStudioTabsUtil,
+    applySelectedAnimation,
+    fallbackToProcedural,
+    loadCustomModel,
+    getAssetsPath,
+    path,
     handleSaveSettings: buildSaveSettingsCallback({
       handleSaveSettingsUtil,
       context: buildSaveSettingsConfig({
@@ -460,7 +469,8 @@ function setupSettingsUI() {
         loadCustomModel,
         applySelectedAnimation,
         updateGearPosition,
-        updateXYZVisibility
+        updateXYZVisibility,
+        populateModelDropdown
       })
     }),
     resetCameraAndPosition,

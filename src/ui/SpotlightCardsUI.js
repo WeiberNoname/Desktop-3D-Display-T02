@@ -34,8 +34,8 @@ export function renderSpotlightCardsUI({ currentSettings, addSpotlightBtn, updat
   }
 
   if (addSpotlightBtn) {
-    addSpotlightBtn.disabled = currentSettings.spotlights.length >= 4;
-    addSpotlightBtn.style.opacity = currentSettings.spotlights.length >= 4 ? '0.5' : '1.0';
+    addSpotlightBtn.disabled = currentSettings.spotlights.length >= 10;
+    addSpotlightBtn.style.opacity = currentSettings.spotlights.length >= 10 ? '0.5' : '1.0';
   }
 
   currentSettings.spotlights.forEach((spotConfig, idx) => {

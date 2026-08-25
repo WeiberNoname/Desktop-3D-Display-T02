@@ -4,6 +4,8 @@
  * continuous mesh rotations, procedural reactions, physics, FPS camera movement, and HUD overlays.
  */
 
+import { updatePerformanceMonitor } from '../ui/PerformanceMonitorUI.js';
+
 export function updateAnimationFrame(deps) {
   const {
     delta,
@@ -166,5 +168,19 @@ export function updateAnimationFrame(deps) {
   }
   if (renderPreviewViewport) {
     renderPreviewViewport();
+  }
+
+  // 7. Update Performance & Motion Magnitude Monitor (Motion tab)
+  const panel = document.getElementById('settings-panel');
+  const isSettingsOpen = panel && !panel.classList.contains('hidden');
+  if (isSettingsOpen) {
+    updatePerformanceMonitor({
+      delta,
+      now,
+      currentSettings,
+      isSettingsOpen,
+      physicsEngine,
+      characterGroup
+    });
   }
 }

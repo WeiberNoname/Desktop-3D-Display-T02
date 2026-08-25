@@ -4,6 +4,8 @@
  * auto-grounding height calculations, AnimationMixer clip setup, and safe fallbacks.
  */
 
+let loadToken = 0;
+
 /**
  * Scans the assets directory for valid 3D model files (.glb, .gltf).
  * @param {Object} fs - File system module reference.
@@ -75,12 +77,13 @@ export function detectAndLoadAsset(ctx) {
 }
 
 /**
- * Safely falls back to procedural mascot if custom model loading fails.
+ * Safely falls back to procedural mascot if custom model loading fails or is selected.
  * @param {Object} ctx - Context dependencies.
  */
 export function fallbackToProcedural(ctx) {
+  loadToken++; // Invalidate pending custom model loads
   console.log('Falling back to procedural mascot.');
-  const { camera, renderer, ipcRenderer, state, currentSettings, callbacks } = ctx;
+  const { camera, renderer, scene, state, currentSettings, callbacks } = ctx;
 
   state.customModelLoaded = false;
   currentSettings.activeModel = 'procedural';
@@ -94,33 +97,34 @@ export function fallbackToProcedural(ctx) {
   state.loadedAnimations = [];
   state.availableAnimations = [];
 
-  const characterGroup = state.getCharacterGroup ? state.getCharacterGroup() : null;
-  if (characterGroup && ctx.scene) {
-    ctx.scene.remove(characterGroup);
+  const existingGroup = state.getCharacterGroup ? state.getCharacterGroup() : null;
+  if (existingGroup && scene) {
+    scene.remove(existingGroup);
   }
 
-  const defaultSize = 350;
+  const targetW = currentSettings.width || 350;
+  const targetH = currentSettings.height || 350;
   if (camera) {
-    camera.aspect = 1.0;
+    camera.aspect = targetW / targetH;
     camera.updateProjectionMatrix();
     camera.position.set(0, 0, 5.5);
+    camera.lookAt(0, 0, 0);
   }
   if (renderer) {
-    renderer.setSize(defaultSize, defaultSize);
-  }
-  if (ipcRenderer) {
-    ipcRenderer.send('resize-window', { width: defaultSize, height: defaultSize });
+    renderer.setSize(targetW, targetH);
   }
 
-  if (callbacks.createMascot) callbacks.createMascot();
+  if (callbacks && callbacks.createMascot) callbacks.createMascot();
+  if (callbacks && callbacks.populateAnimationDropdown) callbacks.populateAnimationDropdown();
 }
 
 /**
- * Loads custom GLTF/GLB model from file path.
+ * Loads custom GLTF/GLB model from file path cleanly with race condition protection.
  * @param {Object} ctx - Context dependencies.
  * @param {string} filePath - Absolute path to GLTF/GLB file.
  */
 export function loadCustomModel(ctx, filePath) {
+  const currentLoadId = ++loadToken;
   const {
     THREE,
     GLTFLoader,
@@ -130,7 +134,6 @@ export function loadCustomModel(ctx, filePath) {
     path,
     pathToFileURL,
     currentSettings,
-    ipcRenderer,
     state,
     callbacks
   } = ctx;
@@ -142,18 +145,33 @@ export function loadCustomModel(ctx, filePath) {
     console.warn("Could not convert path to file URL, using raw path:", e);
   }
 
-  // Create temporary empty group so scene doesn't break
-  let charGroup = new THREE.Group();
-  scene.add(charGroup);
-  state.setCharacterGroup(charGroup);
+  // Clean up previous model and mixer
+  const existingGroup = state.getCharacterGroup ? state.getCharacterGroup() : null;
+  if (existingGroup && scene) {
+    scene.remove(existingGroup);
+  }
+  if (state.mixer) {
+    state.mixer.stopAllAction();
+    state.mixer = null;
+  }
+  state.idleAction = null;
+  state.reactAction = null;
 
   try {
     const loader = new GLTFLoader();
     loader.load(fileUrl, (gltf) => {
-      let existingGroup = state.getCharacterGroup();
-      if (existingGroup) scene.remove(existingGroup);
+      // Discard if another model load was triggered in the meantime
+      if (currentLoadId !== loadToken) {
+        console.log('Discarding stale GLTF load result');
+        return;
+      }
 
-      charGroup = new THREE.Group();
+      const prevGroup = state.getCharacterGroup ? state.getCharacterGroup() : null;
+      if (prevGroup && scene) {
+        scene.remove(prevGroup);
+      }
+
+      const charGroup = new THREE.Group();
       scene.add(charGroup);
       state.setCharacterGroup(charGroup);
 
@@ -179,45 +197,21 @@ export function loadCustomModel(ctx, filePath) {
       innerGroup.add(collisionProxy);
       state.setCollisionProxy(collisionProxy);
 
-      const pixelsPerUnit = 175;
+      charGroup.scale.set(currentSettings.scale, currentSettings.scale, currentSettings.scale);
 
-      if (state.hasSettingsFile) {
-        charGroup.scale.set(currentSettings.scale, currentSettings.scale, currentSettings.scale);
+      const targetW = currentSettings.width || 350;
+      const targetH = currentSettings.height || 350;
+      camera.aspect = targetW / targetH;
+      camera.updateProjectionMatrix();
+      renderer.setSize(targetW, targetH);
 
-        const targetW = currentSettings.width - 20;
-        const targetH = currentSettings.height - 20;
-        camera.aspect = targetW / targetH;
-        camera.updateProjectionMatrix();
-        renderer.setSize(targetW, targetH);
-
-        const visibleHeight = size.y * currentSettings.scale * padding;
-        const zPos = visibleHeight / (2 * Math.tan((camera.fov * Math.PI) / 360));
-        camera.position.set(0, 0, zPos + ((size.z * currentSettings.scale) / 2));
-
-        if (ipcRenderer) ipcRenderer.send('resize-window', { width: currentSettings.width, height: currentSettings.height });
-      } else {
-        charGroup.scale.set(1, 1, 1);
-
-        let winWidth = Math.round(size.x * pixelsPerUnit * padding);
-        let winHeight = Math.round(size.y * pixelsPerUnit * padding);
-        winWidth = Math.max(150, Math.min(800, winWidth));
-        winHeight = Math.max(150, Math.min(800, winHeight));
-
-        const targetW = winWidth - 20;
-        const targetH = winHeight - 20;
-        camera.aspect = targetW / targetH;
-        camera.updateProjectionMatrix();
-        renderer.setSize(targetW, targetH);
-
-        const visibleHeight = size.y * padding;
-        const zPos = visibleHeight / (2 * Math.tan((camera.fov * Math.PI) / 360));
-        camera.position.set(0, 0, zPos + (size.z / 2));
-
-        if (ipcRenderer) ipcRenderer.send('resize-window', { width: winWidth, height: winHeight });
-      }
+      const visibleHeight = size.y * currentSettings.scale * padding;
+      const zPos = visibleHeight / (2 * Math.tan((camera.fov * Math.PI) / 360));
+      camera.position.set(0, 0, zPos + ((size.z * currentSettings.scale) / 2));
+      camera.lookAt(0, 0, 0);
 
       state.loadedAnimations = gltf.animations || [];
-      state.availableAnimations = state.loadedAnimations.map(clip => clip.name || '');
+      state.availableAnimations = state.loadedAnimations.map((clip, idx) => clip.name || `Animation ${idx + 1}`);
 
       state.idleAction = null;
       state.reactAction = null;
@@ -229,17 +223,25 @@ export function loadCustomModel(ctx, filePath) {
       state.customModelLoaded = true;
       console.log('Successfully loaded custom model at original scale:', filePath);
 
+      if (callbacks && callbacks.populateAnimationDropdown) {
+        callbacks.populateAnimationDropdown();
+      }
+
       const fileName = path.basename(filePath);
       setTimeout(() => {
-        if (callbacks.generateModelPreview) callbacks.generateModelPreview(fileName);
+        if (callbacks && callbacks.generateModelPreview) callbacks.generateModelPreview(fileName);
       }, 150);
     }, undefined, (error) => {
-      console.error('Failed to load custom GLB/GLTF model:', error);
-      fallbackToProcedural(ctx);
+      if (currentLoadId === loadToken) {
+        console.error('Failed to load custom GLB/GLTF model:', error);
+        fallbackToProcedural(ctx);
+      }
     });
   } catch (err) {
-    console.error('Synchronous loader crash:', err);
-    fallbackToProcedural(ctx);
+    if (currentLoadId === loadToken) {
+      console.error('Synchronous loader crash:', err);
+      fallbackToProcedural(ctx);
+    }
   }
 }
 
@@ -260,40 +262,52 @@ export function applySelectedAnimation(ctx) {
     return;
   }
 
+  const clips = state.loadedAnimations || [];
+  if (clips.length === 0) return;
+
   let targetClip = null;
 
-  if (currentSettings.activeAnimation !== 'default') {
-    targetClip = state.loadedAnimations.find(clip => clip.name === currentSettings.activeAnimation);
-  }
-
-  if (!targetClip && state.loadedAnimations.length > 0) {
-    const idleKeywords = ['idle', 'stay', 'breathe', 'stand', 'look', 'loop', 'default'];
-    targetClip = state.loadedAnimations.find(clip => {
-      const name = clip.name.toLowerCase();
-      return idleKeywords.some(keyword => name.includes(keyword));
-    });
+  if (currentSettings.activeAnimation && currentSettings.activeAnimation !== 'default') {
+    targetClip = clips.find(clip => clip.name === currentSettings.activeAnimation);
     if (!targetClip) {
-      targetClip = state.loadedAnimations[0];
+      const idx = parseInt(currentSettings.activeAnimation, 10);
+      if (!isNaN(idx) && idx >= 0 && idx < clips.length) {
+        targetClip = clips[idx];
+      }
     }
   }
 
-  if (state.loadedAnimations.length > 1) {
+  if (!targetClip) {
+    const idleKeywords = ['idle', 'stay', 'breathe', 'stand', 'look', 'loop', 'default', 'walk', 'run'];
+    targetClip = clips.find(clip => {
+      const name = (clip.name || '').toLowerCase();
+      return idleKeywords.some(keyword => name.includes(keyword));
+    });
+    if (!targetClip) {
+      targetClip = clips[0];
+    }
+  }
+
+  if (clips.length > 1) {
     const reactKeywords = ['jump', 'spin', 'click', 'react', 'interact', 'pet', 'wave', 'dance', 'happy'];
-    const reactClip = state.loadedAnimations.find(clip => {
-      const name = clip.name.toLowerCase();
+    const reactClip = clips.find(clip => {
+      const name = (clip.name || '').toLowerCase();
       return reactKeywords.some(keyword => name.includes(keyword)) && clip !== targetClip;
     });
     if (reactClip) {
       state.reactAction = state.mixer.clipAction(reactClip);
       state.reactAction.setLoop(THREE.LoopOnce);
       state.reactAction.clampWhenFinished = true;
-      console.log('Auto-detected reaction animation:', reactClip.name);
+      console.log('Auto-detected reaction animation:', reactClip.name || 'Reaction');
     }
   }
 
   if (targetClip) {
-    console.log('Playing active animation loop:', targetClip.name);
+    console.log('Playing active animation loop:', targetClip.name || 'Clip');
     state.idleAction = state.mixer.clipAction(targetClip);
-    state.idleAction.play();
+    state.idleAction.setLoop(THREE.LoopRepeat);
+    state.idleAction.setEffectiveWeight(1.0);
+    state.idleAction.setEffectiveTimeScale(1.0);
+    state.idleAction.reset().play();
   }
 }
