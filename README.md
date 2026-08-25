@@ -50,7 +50,7 @@ node scratch_create_locales.js
 ```
 This script performs a 100% key parity build across all 12 core language codes:
 - Creates `locales/<lang>/translation.json` for all 12 core languages.
-- Ensures all **103 UI keys** exist in every language dictionary with fallback protection to guarantee no missing text errors.
+- Ensures all **110 UI keys** exist in every language dictionary with fallback protection to guarantee no missing text errors.
 
 ### 3. Supported Languages Scope (12 Core Locales)
 | Language Code | Language Name |
@@ -77,6 +77,25 @@ If you add new UI elements or want to edit existing translations:
 
 ---
 
+## ⚡ Key Real-Time Capabilities
+
+### 1. Performance & Motion Magnitude Monitor (Motion Tab)
+The **Motion & Spin** tab includes a built-in real-time diagnostics dashboard:
+- **Live Rendering FPS**: Smoothly computes actual viewport frame rate against target FPS with an adaptive health badge (`OPTIMAL 🟢`, `NORMAL 🟡`, `THROTTLED 🟠`).
+- **Frame Render Latency**: Displays millisecond render time per frame (`ms`) with an animated gauge.
+- **Angular Motion Magnitude**: Real-time Euclidean angular velocity magnitude ($\text{Magnitude} = \sqrt{\omega_x^2 + \omega_y^2 + \omega_z^2} + \text{bobbing} + \text{physics}$) with percentage meter.
+- **V8 Heap Memory Usage**: Real-time Chromium/V8 heap memory allocation tracking (`usedMB / totalMB`).
+
+### 2. Real-Time Model Loading & Animation Synchronization
+- **Instant Thumbnail Selection**: Clicking any model card in the Settings panel immediately loads the 3D asset into the active viewport with race-condition token protection (`loadToken`).
+- **Dynamic Animation List**: Automatically queries and populates all skeletal animation clips built into imported `.glb` / `.gltf` files (`<select id="anim-select">`) and immediately plays the chosen loop.
+
+### 3. 60 FPS Direction-Aware Window Edge Resizing
+- **`requestAnimationFrame` Throttling**: Eliminates event-loop congestion and frame drops during window edge dragging.
+- **Direction-Aware Anchoring**: Pulling East/South edges smoothly resizes window bounds without erratic coordinate jitter, while West/North pulls dynamically track cursor displacement.
+
+---
+
 ## 🚀 Running, Testing & Packaging
 
 ### 1. Run & Test in Development Mode
@@ -84,7 +103,7 @@ Launch the application in development mode:
 ```bash
 npm start
 ```
-To run the automated unit test suite (SettingsManager & PhysicsEngine tests):
+To run the automated unit test suite (SettingsManager, PhysicsEngine, & 12-Locale Key Parity tests):
 ```bash
 # Standard Command Prompt / Bash:
 npm test
@@ -160,8 +179,10 @@ src/
 │   ├── Logger.js               <-- File log streams
 │   └── SteamService.js         <-- Steamworks API wrapper
 └── ui/                         <-- Studio UI & Viewport Controls
+    ├── PerformanceMonitorUI.js <-- Real-time FPS, latency, magnitude & memory monitor
+    ├── PreviewGenerator.js     <-- Isolated 3D thumbnail generation & mascot cards
     ├── PreviewViewportEngine.js<-- Secondary WebGL preview canvas renderer
-    ├── SettingsPanelResizeHandler.js <-- Settings panel edge drag-to-resize handler
+    ├── SettingsPanelResizeHandler.js <-- 60 FPS direction-aware edge resize handler
     ├── SettingsPanelUI.js      <-- 6-tab studio control suite UI
     ├── SpotlightCardsUI.js     <-- Real-time spotlight card visualizers
     └── ...

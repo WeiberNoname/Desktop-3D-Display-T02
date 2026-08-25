@@ -1,6 +1,6 @@
 /**
- * 3D Stage & Lighting Preview Viewport Engine (<170 lines)
- * Encapsulates offscreen canvas preview WebGL renderer, orbit controls, camera presets, helper toggles, and spotlight angle HUD updates.
+ * 3D Stage & Lighting Preview Viewport Engine (<160 lines)
+ * Encapsulates offscreen canvas preview WebGL renderer, orbit controls, camera presets, and helper toggles.
  */
 
 export class PreviewViewportEngine {
@@ -121,7 +121,7 @@ export class PreviewViewportEngine {
     this.previewCamera.lookAt(0, 0, 0);
   }
 
-  renderPreviewViewport({ isSettingsOpen, scene, stageSpotLightHelpers, currentSettings, t }) {
+  renderPreviewViewport({ isSettingsOpen, scene, stageSpotLightHelpers, currentSettings }) {
     const container = document.getElementById('settings-preview-container');
     const canvas = document.getElementById('settings-preview-canvas');
     if (!isSettingsOpen || !container || !canvas || !this.previewRenderer || !this.previewCamera || !scene) return;
@@ -148,26 +148,8 @@ export class PreviewViewportEngine {
 
     try {
       this.previewRenderer.render(scene, this.previewCamera);
-      this.updatePreviewHUD({ currentSettings, t });
     } catch (e) {
       console.warn("Error rendering preview viewport:", e);
     }
-  }
-
-  updatePreviewHUD({ currentSettings, t }) {
-    const hud = document.getElementById('preview-angle-hud');
-    if (!hud) return;
-
-    if (!Array.isArray(currentSettings.spotlights) || currentSettings.spotlights.length === 0) {
-      hud.innerText = (t && t('no_spotlights')) || 'No Spotlights Active';
-      return;
-    }
-
-    const lines = currentSettings.spotlights.map((spot, idx) => {
-      const status = spot.enabled ? 'ON' : 'OFF';
-      return `#${idx + 1} (${status}): H:${spot.angleH ?? 45}° V:${spot.angleV ?? 60}° Cone:${spot.cone ?? 35}° Int:${spot.intensity ?? 2.0}x`;
-    });
-
-    hud.innerText = lines.join(' | ');
   }
 }

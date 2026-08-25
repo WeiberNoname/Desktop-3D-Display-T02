@@ -49,12 +49,14 @@ export async function handleSaveSettings(deps) {
     applySelectedAnimation,
     updateGearPosition,
     updateXYZVisibility,
+    populateModelDropdown,
     closeSettings
   } = deps;
 
   if (langSelect && langSelect.value !== currentSettings.language) {
     currentSettings.language = langSelect.value;
     if (changeLanguage) await changeLanguage(currentSettings.language);
+    if (populateModelDropdown) populateModelDropdown();
   }
 
   if (enableStudioLightsCheck) currentSettings.enableStudioLights = enableStudioLightsCheck.checked;

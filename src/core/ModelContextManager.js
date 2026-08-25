@@ -50,6 +50,7 @@ export function getPreviewGeneratorCtx(deps) {
     getAssetsPath,
     currentSettings,
     ipcRenderer,
+    t,
     state,
     callbacks
   } = deps;
@@ -66,6 +67,7 @@ export function getPreviewGeneratorCtx(deps) {
     getAssetsPath,
     currentSettings,
     ipcRenderer,
+    t,
     state,
     callbacks
   };

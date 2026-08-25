@@ -234,18 +234,42 @@ ipcMain.on('move-window', (event, delta) => {
 // IPC handler to dynamically resize the window based on 3D asset dimensions
 ipcMain.on('resize-window', (event, size) => {
   if (mainWindow) {
+    if (size.bounds) {
+      mainWindow.setBounds({
+        x: Math.round(size.bounds.x),
+        y: Math.round(size.bounds.y),
+        width: Math.round(size.bounds.width),
+        height: Math.round(size.bounds.height)
+      });
+      return;
+    }
+
     const [x, y] = mainWindow.getPosition();
     const [w, h] = mainWindow.getSize();
     const deltaW = Math.round(size.width - w);
     const deltaH = Math.round(size.height - h);
     
-    // Adjust position coordinates by the size delta so the bottom-right corner stays anchored
-    mainWindow.setBounds({
-      x: Math.round(x - deltaW),
-      y: Math.round(y - deltaH),
-      width: Math.round(size.width),
-      height: Math.round(size.height)
-    });
+    if (size.edge) {
+      // Direction-aware edge resize: only adjust position if top/left edges are pulled
+      let newX = x;
+      let newY = y;
+      if (size.edge.includes('w')) newX = Math.round(x - deltaW);
+      if (size.edge.includes('n')) newY = Math.round(y - deltaH);
+      mainWindow.setBounds({
+        x: newX,
+        y: newY,
+        width: Math.round(size.width),
+        height: Math.round(size.height)
+      });
+    } else {
+      // Default: anchor bottom-right for slider / model change
+      mainWindow.setBounds({
+        x: Math.round(x - deltaW),
+        y: Math.round(y - deltaH),
+        width: Math.round(size.width),
+        height: Math.round(size.height)
+      });
+    }
   }
 });
 

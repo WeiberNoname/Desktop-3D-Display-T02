@@ -23,7 +23,8 @@ export function buildSaveSettingsConfig(deps) {
     loadCustomModel,
     applySelectedAnimation,
     updateGearPosition,
-    updateXYZVisibility
+    updateXYZVisibility,
+    populateModelDropdown
   } = deps;
 
   return {
@@ -45,6 +46,7 @@ export function buildSaveSettingsConfig(deps) {
     loadCustomModel,
     applySelectedAnimation,
     updateGearPosition,
-    updateXYZVisibility
+    updateXYZVisibility,
+    populateModelDropdown
   };
 }

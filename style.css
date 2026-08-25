@@ -756,25 +756,6 @@ body.dev-mode::after {
   cursor: grabbing;
 }
 
-.preview-angle-hud {
-  position: absolute;
-  top: 30px;
-  left: 8px;
-  font-size: 10px;
-  font-family: Consolas, Monaco, monospace;
-  color: #38bdf8;
-  background: rgba(0, 0, 0, 0.7);
-  padding: 3px 6px;
-  border-radius: 4px;
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  pointer-events: none;
-  z-index: 10;
-  max-width: calc(100% - 16px);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .preview-hud-controls {
   position: absolute;
   bottom: 6px;
@@ -805,4 +786,76 @@ body.dev-mode::after {
   background: rgba(230, 126, 34, 0.4) !important;
   border-color: #f39c12 !important;
   color: #ffffff !important;
+}
+
+/* Performance & Motion Monitor UI (Motion Tab) */
+.perf-status-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  font-family: Consolas, Monaco, monospace;
+}
+
+.perf-status-badge.optimal {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.perf-status-badge.normal {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.perf-status-badge.throttled {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.perf-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 6px;
+}
+
+.perf-card {
+  background: rgba(18, 18, 22, 0.75);
+  border: 1px solid rgba(60, 60, 70, 0.4);
+  border-radius: 5px;
+  padding: 6px 8px;
+}
+
+.perf-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: #cbd5e1;
+  margin-bottom: 4px;
+}
+
+.perf-mono {
+  font-family: Consolas, Monaco, 'Courier New', monospace;
+  font-weight: 600;
+  font-size: 11px;
+  color: #f39c12;
+}
+
+.perf-bar-bg {
+  width: 100%;
+  height: 5px;
+  background: rgba(40, 40, 48, 0.8);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.perf-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.15s ease-out;
 }
