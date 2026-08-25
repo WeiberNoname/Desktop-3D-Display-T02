@@ -495,7 +495,9 @@ function setupSettingsUI() {
 function resetCameraAndPosition() {
   resetCameraAndPositionUtil({
     camera,
+    THREE,
     state: {
+      customModelLoaded,
       set cameraPitch(v) { cameraPitch = v; },
       set cameraYaw(v) { cameraYaw = v; },
       set fpsKeyW(v) { fpsKeyW = v; },

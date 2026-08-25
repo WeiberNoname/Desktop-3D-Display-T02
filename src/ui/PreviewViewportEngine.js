@@ -1,6 +1,6 @@
 /**
- * 3D Stage & Lighting Preview Viewport Engine (<160 lines)
- * Encapsulates offscreen canvas preview WebGL renderer, orbit controls, camera presets, and helper toggles.
+ * 3D Stage & Lighting Preview Viewport Engine (<180 lines)
+ * Encapsulates offscreen canvas preview WebGL renderer, orbit controls, zoom controls, camera presets, and helper toggles.
  */
 
 export class PreviewViewportEngine {
@@ -10,6 +10,7 @@ export class PreviewViewportEngine {
     this.previewCamera = null;
     this.previewHelpersVisible = true;
     this.isPreviewDragging = false;
+    this.previewDragMode = 'orbit'; // 'orbit' or 'zoom'
     this.previewDragStartX = 0;
     this.previewDragStartY = 0;
     this.previewCamRotH = 0.5;
@@ -19,6 +20,7 @@ export class PreviewViewportEngine {
 
   initPreviewViewport() {
     const THREE = this.THREE;
+    const container = document.getElementById('settings-preview-container');
     const canvas = document.getElementById('settings-preview-canvas');
     if (!canvas) return;
 
@@ -32,8 +34,13 @@ export class PreviewViewportEngine {
       this.previewCamera = new THREE.PerspectiveCamera(45, (canvas.clientWidth || 300) / (canvas.clientHeight || 180), 0.1, 100);
       this.updatePreviewCameraPosition();
 
+      // Prevent default context menu on right click
+      canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+      if (container) container.addEventListener('contextmenu', (e) => e.preventDefault());
+
       canvas.addEventListener('mousedown', (e) => {
         this.isPreviewDragging = true;
+        this.previewDragMode = (e.button === 2 || e.shiftKey) ? 'zoom' : 'orbit';
         this.previewDragStartX = e.clientX;
         this.previewDragStartY = e.clientY;
       });
@@ -45,8 +52,12 @@ export class PreviewViewportEngine {
         this.previewDragStartX = e.clientX;
         this.previewDragStartY = e.clientY;
 
-        this.previewCamRotH -= deltaX * 0.01;
-        this.previewCamRotV = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, this.previewCamRotV + deltaY * 0.01));
+        if (this.previewDragMode === 'zoom') {
+          this.previewCamDist = Math.max(0.8, Math.min(35.0, this.previewCamDist + deltaY * 0.05));
+        } else {
+          this.previewCamRotH -= deltaX * 0.01;
+          this.previewCamRotV = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, this.previewCamRotV + deltaY * 0.01));
+        }
         this.updatePreviewCameraPosition();
       });
 
@@ -54,11 +65,34 @@ export class PreviewViewportEngine {
         this.isPreviewDragging = false;
       });
 
-      canvas.addEventListener('wheel', (e) => {
+      const handleWheelZoom = (e) => {
         e.preventDefault();
-        this.previewCamDist = Math.max(2.0, Math.min(15.0, this.previewCamDist + e.deltaY * 0.005));
+        e.stopPropagation();
+        const zoomStep = e.deltaY * 0.005;
+        this.previewCamDist = Math.max(0.8, Math.min(35.0, this.previewCamDist + zoomStep));
         this.updatePreviewCameraPosition();
-      }, { passive: false });
+      };
+
+      canvas.addEventListener('wheel', handleWheelZoom, { passive: false });
+      if (container) {
+        container.addEventListener('wheel', handleWheelZoom, { passive: false });
+      }
+
+      const zoomInBtn = document.getElementById('preview-btn-zoom-in');
+      if (zoomInBtn) {
+        zoomInBtn.addEventListener('click', () => {
+          this.previewCamDist = Math.max(0.8, this.previewCamDist - 1.2);
+          this.updatePreviewCameraPosition();
+        });
+      }
+
+      const zoomOutBtn = document.getElementById('preview-btn-zoom-out');
+      if (zoomOutBtn) {
+        zoomOutBtn.addEventListener('click', () => {
+          this.previewCamDist = Math.min(35.0, this.previewCamDist + 1.2);
+          this.updatePreviewCameraPosition();
+        });
+      }
 
       const resetBtn = document.getElementById('preview-btn-reset');
       if (resetBtn) {
