@@ -114,8 +114,10 @@ export function setupInteraction(ctx) {
           innerModelGroup.rotation.z = state.navStartRotationZ + deltaAngle;
           if (currentSettings) currentSettings.rotZ = innerModelGroup.rotation.z;
         } else if (state.navType === 'zoom') {
-          const zPos = state.navStartTranslationZ - deltaY * 0.01;
-          innerModelGroup.position.z = Math.max(-10.0, Math.min(4.0, zPos));
+          if (camera) {
+            const newZ = (state.navStartCameraZ || 5.5) + deltaY * 0.02;
+            camera.position.z = Math.max(1.0, Math.min(30.0, newZ));
+          }
         }
       }
       return;
@@ -352,20 +354,18 @@ export function setupInteraction(ctx) {
 
   window.addEventListener('wheel', (event) => {
     if (state.isSettingsOpen) return;
-    const innerModelGroup = getInnerModelGroup();
-    if (innerModelGroup) {
-      const zoomSpeed = -0.002;
-      const newZ = innerModelGroup.position.z + event.deltaY * zoomSpeed;
-      innerModelGroup.position.z = Math.max(-10.0, Math.min(4.0, newZ));
+    if (camera) {
+      const zoomSpeed = 0.003;
+      const minZ = 1.0;
+      const maxZ = 30.0;
+      camera.position.z = Math.max(minZ, Math.min(maxZ, camera.position.z + event.deltaY * zoomSpeed));
     }
   }, { passive: true });
 
   window.addEventListener('dblclick', (event) => {
     if (state.isSettingsOpen) return;
-    const innerModelGroup = getInnerModelGroup();
-    if (event.altKey && innerModelGroup) {
-      innerModelGroup.rotation.set(0, 0, 0);
-      innerModelGroup.position.set(0, 0, 0);
+    if (event.altKey) {
+      if (callbacks.resetCameraAndPosition) callbacks.resetCameraAndPosition();
       if (callbacks.showSpeechBubble) callbacks.showSpeechBubble("View reset! 🔄", 1500);
     }
   });
