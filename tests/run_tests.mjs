@@ -12,6 +12,8 @@ assert.strictEqual(defaults.height, 350, 'Default height should be 350');
 assert.strictEqual(defaults.targetFps, 60, 'Default targetFps should be 60');
 assert.strictEqual(defaults.language, 'en', 'Default language should be en');
 assert.strictEqual(defaults.activeModel, 'procedural', 'Default activeModel should be procedural');
+assert.strictEqual(defaults.sakuraRain, true, 'Default sakuraRain should be true');
+assert.strictEqual(defaults.dynamicBatterySaver, false, 'Default dynamicBatterySaver should be false');
 
 const merged = SettingsManager.mergeWithDefaults({ scale: 2.5, targetFps: 120, customKey: 'test' });
 assert.strictEqual(merged.scale, 2.5, 'Scale should be overridden to 2.5');

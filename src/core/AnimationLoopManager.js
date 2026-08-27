@@ -26,6 +26,7 @@ export function updateAnimationFrame(deps) {
     axesHelper,
     renderer,
     scene,
+    sakuraRainManager,
     renderPreviewViewport,
     updateFPSCamera
   } = deps;
@@ -33,6 +34,12 @@ export function updateAnimationFrame(deps) {
   // 1. Update skeletal animation if active
   if (mixer) {
     mixer.update(delta);
+  }
+
+  // 1.5 Update 3D Sakura Petal Rain animation
+  if (sakuraRainManager) {
+    sakuraRainManager.setEnabled(currentSettings.sakuraRain !== false);
+    sakuraRainManager.update(delta, elapsed);
   }
 
   // 2. Handle continuous axis spinning if enabled

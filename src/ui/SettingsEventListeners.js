@@ -243,6 +243,14 @@ export function setupSettingsUI(deps) {
     });
   }
 
+  const sakuraRainCheck = document.getElementById('sakura-rain');
+  if (sakuraRainCheck) {
+    sakuraRainCheck.addEventListener('change', () => {
+      currentSettings.sakuraRain = sakuraRainCheck.checked;
+      if (saveSettingsFile) saveSettingsFile();
+    });
+  }
+
   const activatePreset = (intensity, spotlights, bubbleText, duration) => {
     currentSettings.enableStudioLights = true;
     currentSettings.ambientIntensity = intensity;

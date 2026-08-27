@@ -121,11 +121,13 @@ export function syncSlidersUI(deps) {
   const dynamicBatterySaverDom = deps.dynamicBatterySaverCheck || document.getElementById('dynamic-battery-saver');
   if (gpuLowPowerDom) gpuLowPowerDom.checked = !!currentSettings.gpuLowPower;
   if (idleFpsSaverDom) idleFpsSaverDom.checked = !!currentSettings.idleFpsSaver;
-  if (dynamicBatterySaverDom) dynamicBatterySaverDom.checked = currentSettings.dynamicBatterySaver !== false;
+  if (dynamicBatterySaverDom) dynamicBatterySaverDom.checked = !!currentSettings.dynamicBatterySaver;
   if (mouseOptimizeCheck) mouseOptimizeCheck.checked = currentSettings.mouseOptimize;
   if (settingsLeftCheck) settingsLeftCheck.checked = currentSettings.settingsLeft;
   if (lockPositionCheck) lockPositionCheck.checked = currentSettings.lockPosition;
   if (viewOnlyCheck) viewOnlyCheck.checked = currentSettings.viewOnly;
+  const sakuraRainDom = deps.sakuraRainCheck || document.getElementById('sakura-rain');
+  if (sakuraRainDom) sakuraRainDom.checked = currentSettings.sakuraRain !== false;
   if (enablePhysicsCheck) enablePhysicsCheck.checked = currentSettings.enablePhysics;
   if (physicsFloorCheck) physicsFloorCheck.checked = currentSettings.physicsFloor;
   if (physicsGravitySlider) physicsGravitySlider.value = currentSettings.physicsGravity;
