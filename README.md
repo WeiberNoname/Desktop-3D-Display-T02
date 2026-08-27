@@ -2,7 +2,7 @@
 
 A borderless, transparent, interactive 3D desktop companion pet for Windows powered by **Electron**, **Three.js**, and **i18next**.
 
-> 📖 **Full User Manual:** For complete guides on controls, custom 3D model loading, FPS camera flight, physics throwing, stage spotlights, Z-axis roll spin, panel edge resizing, dynamic battery saver mode, and 12-language setup, please see **[USER_MANUAL.md](file:///c:/Users/space/.gemini/antigravity-ide/scratch/Desktop-3D-Display-T03/USER_MANUAL.md)**.
+> 📖 **Full User Manual:** For complete guides on controls, custom 3D model loading, FPS camera flight, physics throwing, stage spotlights, Z-axis roll spin, panel edge resizing, dynamic battery saver mode, sakura rain particle simulation, and 12-language setup, please see **[USER_MANUAL.md](USER_MANUAL.md)**.
 
 ---
 
@@ -50,7 +50,7 @@ node scratch_create_locales.js
 ```
 This script performs a 100% key parity build across all 12 core language codes:
 - Creates `locales/<lang>/translation.json` for all 12 core languages.
-- Ensures all **110 UI keys** exist in every language dictionary with fallback protection to guarantee no missing text errors.
+- Ensures all **121 UI keys** exist in every language dictionary with fallback protection to guarantee no missing text errors.
 
 ### 3. Supported Languages Scope (12 Core Locales)
 | Language Code | Language Name |
@@ -71,26 +71,39 @@ This script performs a 100% key parity build across all 12 core language codes:
 ### 4. Adding or Updating Custom Translations
 If you add new UI elements or want to edit existing translations:
 1. Open `scratch_create_locales.js`.
-2. Add or modify translation keys inside `newTranslations`.
+2. Add or modify translation keys inside `sakuraTranslations` or `newTranslations`.
 3. Run `node scratch_create_locales.js` to propagate the changes to all 12 `translation.json` files.
 4. Rebuild the app binary with `npm run build`.
 
 ---
 
-## ⚡ Key Real-Time Capabilities
+## ⚡ Key Real-Time Capabilities & Studio Suite
 
-### 1. Performance & Motion Magnitude Monitor (Motion Tab)
+### 1. 🌸 Atmosphere & Visual FX (Atmosphere Tab)
+- **3D Sakura Petal Rain Simulation Engine**: Real-time particle system featuring curved petal geometry, natural tumbling aerodynamics, sinusoidal breeze drift, and viewport boundary wrapping.
+- **Dedicated Atmosphere Tab**: Complete ambient controls and effect toggles organized cleanly in the Studio Suite navigation bar.
+
+### 2. 🌀 Performance & Motion Diagnostics (Motion Tab)
 The **Motion & Spin** tab includes a built-in real-time diagnostics dashboard:
 - **Live Rendering FPS**: Smoothly computes actual viewport frame rate against target FPS with an adaptive health badge (`OPTIMAL 🟢`, `NORMAL 🟡`, `THROTTLED 🟠`).
 - **Frame Render Latency**: Displays millisecond render time per frame (`ms`) with an animated gauge.
 - **Angular Motion Magnitude**: Real-time Euclidean angular velocity magnitude ($\text{Magnitude} = \sqrt{\omega_x^2 + \omega_y^2 + \omega_z^2} + \text{bobbing} + \text{physics}$) with percentage meter.
 - **V8 Heap Memory Usage**: Real-time Chromium/V8 heap memory allocation tracking (`usedMB / totalMB`).
+- **Dynamic Battery Saver**: Configurable frame rate throttling when idle or unfocused.
 
-### 2. Real-Time Model Loading & Animation Synchronization
-- **Instant Thumbnail Selection**: Clicking any model card in the Settings panel immediately loads the 3D asset into the active viewport with race-condition token protection (`loadToken`).
+### 3. 🎯 Real-Time Model Loading & Animation Synchronization (Display Tab)
+- **Instant Thumbnail Selection**: Clicking any model card in the Settings panel immediately loads the 3D asset into the active viewport with monotonic race-condition protection (`loadToken`).
 - **Dynamic Animation List**: Automatically queries and populates all skeletal animation clips built into imported `.glb` / `.gltf` files (`<select id="anim-select">`) and immediately plays the chosen loop.
 
-### 3. 60 FPS Direction-Aware Window Edge Resizing
+### 4. 🔦 Multi-Source Stage Lighting & 3D Preview (Lighting Tab)
+- **Dynamic Spotlights**: Add, colorize, and position multi-source spotlight cones in 3D space with helper rays and real-time intensity dials.
+- **Lighting Presets**: Instant one-click presets including *Dual Concert Lights* and *Dark Stage Mode*.
+- **Interactive 3D Preview Viewport**: Secondary offscreen WebGL renderer with Front, Top, Iso camera views and zoom controls.
+
+### 5. ⚡ Momentum Physics Engine (Physics Tab)
+- **Interactive Throwing**: Hold **D + Left Mouse Drag** to throw the mascot across your desktop with realistic momentum, gravitational acceleration, and ground landing bounce dynamics.
+
+### 6. 📐 60 FPS Direction-Aware Window Edge Resizing
 - **`requestAnimationFrame` Throttling**: Eliminates event-loop congestion and frame drops during window edge dragging.
 - **Direction-Aware Anchoring**: Pulling East/South edges smoothly resizes window bounds without erratic coordinate jitter, while West/North pulls dynamically track cursor displacement.
 
@@ -98,21 +111,28 @@ The **Motion & Spin** tab includes a built-in real-time diagnostics dashboard:
 
 ## 🚀 Running, Testing & Packaging
 
-### 1. Run & Test in Development Mode
+### 1. Run in Development Mode
 Launch the application in development mode:
 ```bash
 npm start
 ```
-To run the automated unit test suite (SettingsManager, PhysicsEngine, & 12-Locale Key Parity tests):
+
+### 2. Run Automated Unit Test Suite (4 Test Suites)
+Run the automated unit tests covering all core systems:
 ```bash
 # Standard Command Prompt / Bash:
 npm test
 
-# Direct Node execution (works in all Windows PowerShell environments):
+# Direct Node execution (PowerShell / Command Prompt):
 node tests/run_tests.mjs
 ```
+The test runner validates:
+1. **SettingsManager**: Default configurations, `.tmp` atomic write staging, and config auto-healing.
+2. **PhysicsEngine**: Kinematic integration, velocity dampening, and boundary collision response.
+3. **12-Locale Parity**: 100% key existence across all 12 language dictionaries (`locales/*/translation.json`).
+4. **AppStore**: Reactive proxy mutations, subscriber callback notifications, and batch state changes.
 
-### 2. Build Standalone Production Executable
+### 3. Build Standalone Production Executable
 To package the app into a standalone Windows executable binary (`DesktopPet.exe` inside `DesktopPet-win32-x64/`):
 ```cmd
 # Standard Command Prompt (cmd) / PowerShell (via cmd wrapper):
@@ -168,23 +188,25 @@ src/
 ├── core/                       <-- 3D WebGL & Application Core
 │   ├── AnimationLoopManager.js <-- Main RAF render loop manager
 │   ├── AppInitializer.js       <-- Application bootstrap & WebGL setup
-│   ├── AppStateContainer.js    <-- Centralized state store proxy
 │   ├── LightingManager.js      <-- Multi-source stage spotlight controls
 │   ├── MascotBuilder.js        <-- Procedural 3D mesh fallback builder
-│   ├── ModelLoader.js          <-- GLTF/GLB asset importer & bounding box parser
+│   ├── ModelLoader.js          <-- GLTF/GLB asset importer & monotonic token parser
+│   ├── SakuraRainManager.js    <-- 3D Cherry blossom petal rain particle engine
 │   └── ...
 ├── managers/                   <-- State & Persistence Managers
+│   ├── AppStore.js             <-- Reactive Proxy state store with subscriber system
 │   └── SettingsManager.js      <-- Atomic settings JSON staging & config healing
 ├── main/                       <-- Electron Main Process Services
-│   ├── Logger.js               <-- File log streams
-│   └── SteamService.js         <-- Steamworks API wrapper
+│   ├── Logger.js               <-- Diagnostics logger & IPC console stream
+│   └── SteamService.js         <-- Steamworks API wrapper & Steam overlay handler
 └── ui/                         <-- Studio UI & Viewport Controls
     ├── PerformanceMonitorUI.js <-- Real-time FPS, latency, magnitude & memory monitor
     ├── PreviewGenerator.js     <-- Isolated 3D thumbnail generation & mascot cards
     ├── PreviewViewportEngine.js<-- Secondary WebGL preview canvas renderer
     ├── SettingsPanelResizeHandler.js <-- 60 FPS direction-aware edge resize handler
-    ├── SettingsPanelUI.js      <-- 6-tab studio control suite UI
+    ├── SettingsPanelUI.js      <-- 7-tab studio control suite UI
     ├── SpotlightCardsUI.js     <-- Real-time spotlight card visualizers
+    ├── StudioTabManager.js     <-- Studio tab router & scroll arrow navigation
     └── ...
 ```
 
@@ -198,4 +220,3 @@ While Desktop Pet is currently a 100% deterministic 3D desktop graphics engine, 
 - **Phase 2 (Voice & Lip-Sync)**: Integrate Whisper STT and Kokoro/Piper TTS with Three.js morph-target viseme animation drivers.
 - **Phase 3 (Vision Perception)**: Implement periodic desktop screen capture via Electron `desktopCapturer` passed to Vision-Language Models (VLMs).
 - **Phase 4 (Autonomous Agent Loop)**: Replace fixed bobbing with an AI emotional state machine and desktop tool-calling capabilities.
-
