@@ -47,14 +47,13 @@ import {
   getPreviewGeneratorCtx as getPreviewGeneratorCtxUtil
 } from './src/core/ModelContextManager.js';
 import { createInteractionStateProxy } from './src/core/InteractionStateFactory.js';
-import { createAppStateContainer } from './src/core/AppStateContainer.js';
-import { buildSaveSettingsCallback } from './src/ui/FormDOMGatherer.js';
 import { createFormSyncManager } from './src/ui/FormSyncManager.js';
 import { createModelDelegates } from './src/core/ModelDelegates.js';
 import { createRenderLoopDelegates } from './src/core/RenderLoopDelegates.js';
 import { createInteractionDelegates } from './src/core/InteractionDelegates.js';
 import { createSettingsUIDelegates } from './src/ui/SettingsUIDelegates.js';
-import { buildInteractionStateAccessors } from './src/core/ContextFactoryDelegates.js';
+import { buildSaveSettingsCallback } from './src/ui/FormDOMGatherer.js';
+import { AppStore } from './src/managers/AppStore.js';
 import { buildSaveSettingsConfig } from './src/ui/SettingsUIConfigBuilder.js';
 
 const { ipcRenderer } = window.require('electron');
@@ -80,13 +79,9 @@ let availableAnimations = [];
 let customModelLoaded = false;
 let sakuraRainManager = null;
 
-// Application State Container
-const appState = createAppStateContainer();
-let { fps, ui, navigation, modifiers, animation: animationState } = appState;
-let { cameraPitch, cameraYaw, fpsKeyW, fpsKeyA, fpsKeyS, fpsKeyD, fpsKeySpace, fpsKeyShift } = fps;
-let { hasSettingsFile, wasConfigHealed, isSettingsOpen, isMouseOverCharacter, isMouseOverUI, isDragging, dragStartedOnMascot, isDraggingGear, dragStartScreenX, dragStartScreenY, dragMoveDistance } = ui;
-let { isNavigating, navType, navStartMouseX, navStartMouseY, navStartRotationX, navStartRotationY, navStartTranslationX, navStartTranslationY, navStartTranslationZ } = navigation;
-let { altKeyHeld, shiftKeyHeld, ctrlKeyHeld, keyDHeld, isPhysicsDragging } = modifiers;
+// Application Reactive State Store
+const appStore = new AppStore();
+const appState = appStore.state;
 
 // Application Settings initialized via SettingsManager
 let currentSettings = SettingsManager.getDefaultSettings();
@@ -105,10 +100,10 @@ async function init() {
     currentSettings,
     readSettingsFile,
     state: {
-      set hasSettingsFile(v) { hasSettingsFile = v; },
-      get hasSettingsFile() { return hasSettingsFile; },
-      set wasConfigHealed(v) { wasConfigHealed = v; },
-      get wasConfigHealed() { return wasConfigHealed; },
+      set hasSettingsFile(v) { appState.hasSettingsFile = v; },
+      get hasSettingsFile() { return appState.hasSettingsFile; },
+      set wasConfigHealed(v) { appState.wasConfigHealed = v; },
+      get wasConfigHealed() { return appState.wasConfigHealed; },
       set scene(s) { scene = s; },
       set camera(c) { camera = c; },
       set renderer(r) { renderer = r; },
@@ -118,8 +113,8 @@ async function init() {
       set rimLight(l) { rimLight = l; },
       set axesHelper(h) { axesHelper = h; },
       set gridHelper(h) { gridHelper = h; },
-      getIsMouseOverCharacter: () => isMouseOverCharacter,
-      setIsMouseOverCharacter: (v) => { isMouseOverCharacter = v; }
+      getIsMouseOverCharacter: () => appState.isMouseOverCharacter,
+      setIsMouseOverCharacter: (v) => { appState.isMouseOverCharacter = v; }
     },
     callbacks: {
       updateXYZVisibility,
@@ -145,7 +140,7 @@ async function init() {
 }
 
 function updateSpotlightPosition() {
-  updateSpotlightPositionUtil(scene, currentSettings.spotlights, stageSpotLights, stageSpotLightHelpers, isSettingsOpen, THREE);
+  updateSpotlightPositionUtil(scene, currentSettings.spotlights, stageSpotLights, stageSpotLightHelpers, appState.isSettingsOpen, THREE);
 }
 
 function updateStageLighting() {
@@ -169,7 +164,6 @@ function createMascot() {
 let updateIgnoreMouseState = () => {};
 
 const interactionDelegates = createInteractionDelegates({
-  createInteractionStateProxy,
   setupInteractionUtil,
   THREE,
   physicsEngine,
@@ -177,39 +171,7 @@ const interactionDelegates = createInteractionDelegates({
   ipcRenderer,
   fs,
   path,
-  stateAccessors: buildInteractionStateAccessors({
-    isSettingsOpen: { get: () => isSettingsOpen, set: (v) => { isSettingsOpen = v; } },
-    isMouseOverCharacter: { get: () => isMouseOverCharacter, set: (v) => { isMouseOverCharacter = v; } },
-    isMouseOverUI: { get: () => isMouseOverUI, set: (v) => { isMouseOverUI = v; } },
-    isDragging: { get: () => isDragging, set: (v) => { isDragging = v; } },
-    dragStartedOnMascot: { get: () => dragStartedOnMascot, set: (v) => { dragStartedOnMascot = v; } },
-    isDraggingGear: { get: () => isDraggingGear, set: (v) => { isDraggingGear = v; } },
-    dragStartScreenX: { get: () => dragStartScreenX, set: (v) => { dragStartScreenX = v; } },
-    dragStartScreenY: { get: () => dragStartScreenY, set: (v) => { dragStartScreenY = v; } },
-    dragMoveDistance: { get: () => dragMoveDistance, set: (v) => { dragMoveDistance = v; } },
-    isNavigating: { get: () => isNavigating, set: (v) => { isNavigating = v; } },
-    navType: { get: () => navType, set: (v) => { navType = v; } },
-    navStartMouseX: { get: () => navStartMouseX, set: (v) => { navStartMouseX = v; } },
-    navStartMouseY: { get: () => navStartMouseY, set: (v) => { navStartMouseY = v; } },
-    navStartRotationX: { get: () => navStartRotationX, set: (v) => { navStartRotationX = v; } },
-    navStartRotationY: { get: () => navStartRotationY, set: (v) => { navStartRotationY = v; } },
-    navStartTranslationX: { get: () => navStartTranslationX, set: (v) => { navStartTranslationX = v; } },
-    navStartTranslationY: { get: () => navStartTranslationY, set: (v) => { navStartTranslationY = v; } },
-    navStartTranslationZ: { get: () => navStartTranslationZ, set: (v) => { navStartTranslationZ = v; } },
-    altKeyHeld: { get: () => altKeyHeld, set: (v) => { altKeyHeld = v; } },
-    shiftKeyHeld: { get: () => shiftKeyHeld, set: (v) => { shiftKeyHeld = v; } },
-    ctrlKeyHeld: { get: () => ctrlKeyHeld, set: (v) => { ctrlKeyHeld = v; } },
-    keyDHeld: { get: () => keyDHeld, set: (v) => { keyDHeld = v; } },
-    isPhysicsDragging: { get: () => isPhysicsDragging, set: (v) => { isPhysicsDragging = v; } },
-    cameraPitch: { get: () => cameraPitch, set: (v) => { cameraPitch = v; } },
-    cameraYaw: { get: () => cameraYaw, set: (v) => { cameraYaw = v; } },
-    fpsKeyW: { get: () => fpsKeyW, set: (v) => { fpsKeyW = v; } },
-    fpsKeyA: { get: () => fpsKeyA, set: (v) => { fpsKeyA = v; } },
-    fpsKeyS: { get: () => fpsKeyS, set: (v) => { fpsKeyS = v; } },
-    fpsKeyD: { get: () => fpsKeyD, set: (v) => { fpsKeyD = v; } },
-    fpsKeySpace: { get: () => fpsKeySpace, set: (v) => { fpsKeySpace = v; } },
-    fpsKeyShift: { get: () => fpsKeyShift, set: (v) => { fpsKeyShift = v; } }
-  }),
+  state: appState,
   sceneAccessors: {
     getScene: () => scene,
     getCamera: () => camera,
@@ -262,7 +224,7 @@ function setupInteraction() {
 
 function triggerInteraction() {
   triggerInteractionUtil({
-    animationState,
+    animationState: appState.animation,
     mixer,
     reactAction,
     idleAction,
@@ -294,7 +256,7 @@ function getModelLoaderCtx() {
     ipcRenderer,
     getAssetsPath,
     state: {
-      hasSettingsFile,
+      hasSettingsFile: appState.hasSettingsFile,
       get discoveredModels() { return discoveredModels; },
       set discoveredModels(v) { discoveredModels = v; },
       get customModelLoaded() { return customModelLoaded; },
@@ -356,7 +318,7 @@ function readSettingsFile() {
     ipcRenderer
   });
   if (result && result.wasConfigHealed) {
-    wasConfigHealed = true;
+    appState.wasConfigHealed = true;
   }
   return result ? result.hasSettingsFile : false;
 }
@@ -450,14 +412,14 @@ function setupSettingsUI() {
         physicsEngine,
         saveSettingsFile,
         state: {
-          cameraPitch,
-          cameraYaw,
-          fpsKeyW,
-          fpsKeyA,
-          fpsKeyS,
-          fpsKeyD,
-          fpsKeySpace,
-          fpsKeyShift,
+          cameraPitch: appState.cameraPitch,
+          cameraYaw: appState.cameraYaw,
+          fpsKeyW: appState.fpsKeyW,
+          fpsKeyA: appState.fpsKeyA,
+          fpsKeyS: appState.fpsKeyS,
+          fpsKeyD: appState.fpsKeyD,
+          fpsKeySpace: appState.fpsKeySpace,
+          fpsKeyShift: appState.fpsKeyShift,
           mixer,
           idleAction,
           reactAction,
@@ -483,18 +445,7 @@ function setupSettingsUI() {
     }),
     resetCameraAndPosition,
     updateIgnoreMouseState: () => updateIgnoreMouseState(),
-    stateAccessors: {
-      set isMouseOverUI(v) { isMouseOverUI = v; },
-      get isMouseOverUI() { return isMouseOverUI; },
-      set isDragging(v) { isDragging = v; },
-      get isDragging() { return isDragging; },
-      set dragStartScreenX(v) { dragStartScreenX = v; },
-      set dragStartScreenY(v) { dragStartScreenY = v; },
-      set dragMoveDistance(v) { dragMoveDistance = v; },
-      get dragMoveDistance() { return dragMoveDistance; },
-      set isSettingsOpen(v) { isSettingsOpen = v; },
-      get isSettingsOpen() { return isSettingsOpen; }
-    }
+    stateAccessors: appState
   });
 
   settingsUIDelegates.setupSettingsUI();
@@ -506,18 +457,18 @@ function resetCameraAndPosition() {
     THREE,
     state: {
       customModelLoaded,
-      set cameraPitch(v) { cameraPitch = v; },
-      set cameraYaw(v) { cameraYaw = v; },
-      set fpsKeyW(v) { fpsKeyW = v; },
-      set fpsKeyS(v) { fpsKeyS = v; },
-      set fpsKeyA(v) { fpsKeyA = v; },
-      set fpsKeyD(v) { fpsKeyD = v; },
-      set fpsKeySpace(v) { fpsKeySpace = v; },
-      set fpsKeyShift(v) { fpsKeyShift = v; }
+      set cameraPitch(v) { appState.cameraPitch = v; },
+      set cameraYaw(v) { appState.cameraYaw = v; },
+      set fpsKeyW(v) { appState.fpsKeyW = v; },
+      set fpsKeyS(v) { appState.fpsKeyS = v; },
+      set fpsKeyA(v) { appState.fpsKeyA = v; },
+      set fpsKeyD(v) { appState.fpsKeyD = v; },
+      set fpsKeySpace(v) { appState.fpsKeySpace = v; },
+      set fpsKeyShift(v) { appState.fpsKeyShift = v; }
     },
     characterGroup,
     innerModelGroup,
-    hasSettingsFile,
+    hasSettingsFile: appState.hasSettingsFile,
     currentSettings,
     physicsEngine
   });
@@ -537,9 +488,9 @@ const renderLoopDelegates = createRenderLoopDelegates({
     mixer,
     innerModelGroup,
     characterGroup,
-    animationState,
+    animationState: appState.animation,
     currentSettings,
-    hasSettingsFile,
+    hasSettingsFile: appState.hasSettingsFile,
     reactAction,
     idleAction,
     customModelLoaded,
@@ -552,11 +503,11 @@ const renderLoopDelegates = createRenderLoopDelegates({
     sakuraRainManager,
     renderPreviewViewport,
     updateFPSCamera,
-    isSettingsOpen,
-    isMouseOverCharacter,
+    isSettingsOpen: appState.isSettingsOpen,
+    isMouseOverCharacter: appState.isMouseOverCharacter,
     stageSpotLightHelpers,
     t,
-    keys: { fpsKeyW, fpsKeyS, fpsKeyA, fpsKeyD, fpsKeySpace, fpsKeyShift }
+    keys: appState
   })
 });
 

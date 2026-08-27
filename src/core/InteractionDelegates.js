@@ -13,6 +13,7 @@ export function createInteractionDelegates(deps) {
     ipcRenderer,
     fs,
     path,
+    state,
     stateAccessors,
     sceneAccessors,
     callbacks
@@ -20,7 +21,7 @@ export function createInteractionDelegates(deps) {
 
   return {
     setupInteraction: () => {
-      const stateProxy = createInteractionStateProxy(stateAccessors);
+      const activeState = state || (createInteractionStateProxy && stateAccessors ? createInteractionStateProxy(stateAccessors) : {});
 
       setupInteractionUtil({
         THREE,
@@ -35,11 +36,11 @@ export function createInteractionDelegates(deps) {
         ipcRenderer,
         fs,
         path,
-        state: stateProxy,
+        state: activeState,
         callbacks
       });
 
-      return stateProxy.updateIgnoreMouseState;
+      return activeState.updateIgnoreMouseState;
     }
   };
 }

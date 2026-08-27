@@ -77,6 +77,11 @@ function createWindow() {
   // forward: true ensures mouse movements are still tracked inside the window.
   mainWindow.setIgnoreMouseEvents(!isDevMode, { forward: true });
 
+  mainWindow.webContents.on('console-message', (e, level, message, line, sourceId) => {
+    Logger.logDiagnostic(`[Renderer Console] ${message}`);
+    console.log(`[Renderer Console] ${message}`);
+  });
+
   if (isDevMode) {
     mainWindow.webContents.openDevTools({ mode: 'detach' });
     logDiagnostic('Developer mode: Detached DevTools window opened.');

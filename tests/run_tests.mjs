@@ -59,4 +59,30 @@ supportedLangs.forEach(lang => {
 });
 console.log('✅ 12-Locale Key Parity tests PASSED.');
 
-console.log('\n🎉 ALL 3 UNIT TEST SUITES PASSED CLEANLY (100% SUCCESS)');
+// 4. Test AppStore Reactive Proxy & Subscriptions
+console.log('▶ Testing AppStore reactive state & subscriber notifications...');
+import { AppStore } from '../src/managers/AppStore.js';
+
+const store = new AppStore();
+assert.strictEqual(store.state.isDragging, false, 'Default isDragging should be false');
+assert.strictEqual(store.state.isSettingsOpen, false, 'Default isSettingsOpen should be false');
+
+let notifiedVal = null;
+const unsubscribe = store.subscribe('isDragging', (newVal) => {
+  notifiedVal = newVal;
+});
+
+store.state.isDragging = true;
+assert.strictEqual(store.state.isDragging, true, 'Direct write to store.state.isDragging should update');
+assert.strictEqual(notifiedVal, true, 'Subscriber should be notified of state update');
+
+unsubscribe();
+store.state.isDragging = false;
+assert.strictEqual(notifiedVal, true, 'Unsubscribed listener should not receive updates');
+
+store.set({ cameraPitch: 0.5, cameraYaw: 1.2 });
+assert.strictEqual(store.state.cameraPitch, 0.5, 'Batch set should update cameraPitch');
+assert.strictEqual(store.state.cameraYaw, 1.2, 'Batch set should update cameraYaw');
+console.log('✅ AppStore reactive tests PASSED.');
+
+console.log('\n🎉 ALL 4 UNIT TEST SUITES PASSED CLEANLY (100% SUCCESS)');
