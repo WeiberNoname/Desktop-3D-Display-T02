@@ -41,6 +41,7 @@
         <button class="studio-tab-btn active" data-tab="tab-display" data-i18n="tab_display">🎯 Display</button>
         <button class="studio-tab-btn" data-tab="tab-motion" data-i18n="tab_motion">🌀 Motion</button>
         <button class="studio-tab-btn" data-tab="tab-lighting" data-i18n="tab_lighting">🔦 Lighting</button>
+        <button class="studio-tab-btn" data-tab="tab-atmosphere" data-i18n="tab_atmosphere">🌸 Atmosphere</button>
         <button class="studio-tab-btn" data-tab="tab-physics" data-i18n="tab_physics">⚡ Physics</button>
         <button class="studio-tab-btn" data-tab="tab-camera" data-i18n="tab_camera">🎥 Camera</button>
         <button class="studio-tab-btn" data-tab="tab-system" data-i18n="tab_system">⚙️ System</button>
@@ -129,7 +130,7 @@
               style="font-size: 10px; opacity: 0.7;" data-i18n="idle_fps_saver_sub">(Caps idle rendering)</span></label>
         </div>
         <div class="setting-item checkbox">
-          <input type="checkbox" id="dynamic-battery-saver" checked>
+          <input type="checkbox" id="dynamic-battery-saver">
           <label for="dynamic-battery-saver"><span data-i18n="dynamic_battery_saver">Dynamic Battery Saver</span> <span
               style="font-size: 10px; opacity: 0.7;" data-i18n="dynamic_battery_saver_sub">(Auto-throttles FPS when idle/unfocused)</span></label>
         </div>
@@ -266,7 +267,23 @@
         </div>
       </div>
 
-      <!-- Tab 4: Physics Engine -->
+      <!-- Tab 4: Atmosphere & Visual FX -->
+      <div id="tab-atmosphere" class="studio-tab-content">
+        <div class="settings-section">
+          <h4 data-i18n="atmosphere_fx_title">🌸 Visual FX & Ambient Atmosphere</h4>
+          <div class="setting-item checkbox">
+            <input type="checkbox" id="sakura-rain" checked>
+            <label for="sakura-rain"><span data-i18n="sakura_rain">🌸 Sakura Petal Rain</span> <span
+                style="font-size: 10px; opacity: 0.7;" data-i18n="sakura_rain_sub">(Gently falling cherry blossoms)</span></label>
+          </div>
+          <div class="setting-hint-note"
+            style="font-size: 11px; background: rgba(255, 182, 193, 0.1); border: 1px solid rgba(255, 182, 193, 0.3); color: #ffb6c1; padding: 8px 12px; border-radius: 6px; margin-top: 10px; line-height: 1.5;">
+            🌸 <strong data-i18n="sakura_hint_title">Sakura Atmosphere</strong>: <span data-i18n="sakura_hint_body">Natural 3D tumbling petals with wind fluttering physics and dynamic lighting.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 5: Physics Engine -->
       <div id="tab-physics" class="studio-tab-content">
         <div class="settings-section">
           <h4 data-i18n="physics_section">⚡ Physics & Collision Dynamics</h4>
@@ -396,8 +413,7 @@
 
     <!-- Fixed Footer Action Buttons -->
     <div style="margin-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 8px; flex-shrink: 0;">
-      <button id="save-btn" class="btn" style="width: 100%; font-size: 1.05em; padding: 8px;" data-i18n="btn_save">Save
-        & Refresh</button>
+      <button id="save-btn" class="btn" style="width: 100%; font-size: 1.05em; padding: 8px;" data-i18n="save_btn">Save & Refresh</button>
     </div>
   </div>
   <!-- Live XYZ Spatial Coordinates HUD Overlay -->

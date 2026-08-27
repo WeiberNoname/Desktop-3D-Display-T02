@@ -96,6 +96,8 @@ export async function handleSaveSettings(deps) {
   currentSettings.settingsLeft = settingsLeftCheck.checked;
   currentSettings.lockPosition = lockPositionCheck.checked;
   currentSettings.viewOnly = viewOnlyCheck.checked;
+  const sakuraRainDom = deps.sakuraRainCheck || document.getElementById('sakura-rain');
+  if (sakuraRainDom) currentSettings.sakuraRain = sakuraRainDom.checked;
 
   if (enablePhysicsCheck) currentSettings.enablePhysics = enablePhysicsCheck.checked;
   if (physicsFloorCheck) currentSettings.physicsFloor = physicsFloorCheck.checked;

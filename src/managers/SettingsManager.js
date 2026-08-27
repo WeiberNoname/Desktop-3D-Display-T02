@@ -14,11 +14,12 @@ export class SettingsManager {
       gpuOptimize: true,
       gpuLowPower: false,
       idleFpsSaver: false,
-      dynamicBatterySaver: true,
+      dynamicBatterySaver: false,
       mouseOptimize: true,
       settingsLeft: false,
       lockPosition: false,
       viewOnly: false,
+      sakuraRain: true,
       enablePhysics: false,
       physicsGravity: 9.8,
       physicsElasticity: 0.7,
@@ -81,6 +82,7 @@ activeAnimation=default
 clickCount=0
 fontSizeScale=1.0
 targetFps=60
+sakuraRain=true
 language=en`;
 
     if (!filePath) {
@@ -130,11 +132,12 @@ language=en`;
             if (key === 'gpuOptimize') { currentSettings.gpuOptimize = (val !== 'false'); validKeysParsed++; }
             if (key === 'gpuLowPower') { currentSettings.gpuLowPower = (val === 'true'); validKeysParsed++; }
             if (key === 'idleFpsSaver') { currentSettings.idleFpsSaver = (val === 'true'); validKeysParsed++; }
-            if (key === 'dynamicBatterySaver') { currentSettings.dynamicBatterySaver = (val !== 'false'); validKeysParsed++; }
+            if (key === 'dynamicBatterySaver') { currentSettings.dynamicBatterySaver = (val === 'true'); validKeysParsed++; }
             if (key === 'mouseOptimize') { currentSettings.mouseOptimize = (val !== 'false'); validKeysParsed++; }
             if (key === 'settingsLeft') { currentSettings.settingsLeft = (val === 'true'); validKeysParsed++; }
             if (key === 'lockPosition') { currentSettings.lockPosition = (val === 'true'); validKeysParsed++; }
             if (key === 'viewOnly') { currentSettings.viewOnly = (val === 'true'); validKeysParsed++; }
+            if (key === 'sakuraRain') { currentSettings.sakuraRain = (val !== 'false'); validKeysParsed++; }
             if (key === 'enablePhysics') { currentSettings.enablePhysics = (val === 'true'); validKeysParsed++; }
             if (key === 'physicsGravity') { currentSettings.physicsGravity = parseFloat(val) || 9.8; validKeysParsed++; }
             if (key === 'physicsElasticity') { currentSettings.physicsElasticity = parseFloat(val) || 0.7; validKeysParsed++; }
@@ -216,11 +219,12 @@ speedZ=${currentSettings.speedZ}
 gpuOptimize=${currentSettings.gpuOptimize}
 gpuLowPower=${currentSettings.gpuLowPower}
 idleFpsSaver=${currentSettings.idleFpsSaver}
-dynamicBatterySaver=${currentSettings.dynamicBatterySaver}
+dynamicBatterySaver=${currentSettings.dynamicBatterySaver === true}
 mouseOptimize=${currentSettings.mouseOptimize}
 settingsLeft=${currentSettings.settingsLeft}
 lockPosition=${currentSettings.lockPosition}
 viewOnly=${currentSettings.viewOnly}
+sakuraRain=${currentSettings.sakuraRain !== false}
 enablePhysics=${currentSettings.enablePhysics}
 physicsGravity=${currentSettings.physicsGravity}
 physicsElasticity=${currentSettings.physicsElasticity}

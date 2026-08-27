@@ -29,7 +29,7 @@ export function createRenderLoopDelegates(deps) {
     const currentSettings = ctx.currentSettings || {};
 
     // Dynamic Battery Saver Option: Throttles to ~15 FPS when unfocused or idle
-    if (currentSettings.dynamicBatterySaver !== false) {
+    if (currentSettings.dynamicBatterySaver === true) {
       const isUnfocused = typeof document !== 'undefined' && !document.hasFocus();
       const isHovered = ctx.isMouseOverCharacter || ctx.isMouseOverUI || ctx.isSettingsOpen;
       const isInteracting = ctx.animationState && ctx.animationState.type === 'interact';

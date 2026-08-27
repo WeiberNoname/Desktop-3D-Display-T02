@@ -6,6 +6,7 @@ import { SettingsManager } from './src/managers/SettingsManager.js';
 import { updateGearPosition as updateGearPositionUtil, showSpeechBubble } from './src/ui/uiUtils.js';
 import { updateSpotlightPosition as updateSpotlightPositionUtil, updateStageLighting as updateStageLightingUtil } from './src/core/LightingManager.js';
 import { createProceduralMascot } from './src/core/MascotBuilder.js';
+import { SakuraRainManager } from './src/core/SakuraRainManager.js';
 import { setupInteraction as setupInteractionUtil } from './src/core/InteractionManager.js';
 import {
   scanForModels as scanForModelsUtil,
@@ -77,6 +78,7 @@ let reactAction = null;
 let loadedAnimations = [];
 let availableAnimations = [];
 let customModelLoaded = false;
+let sakuraRainManager = null;
 
 // Application State Container
 const appState = createAppStateContainer();
@@ -129,6 +131,12 @@ async function init() {
       updateGearPosition,
       initPreviewViewport,
       startBackgroundPreviewGenerator,
+      initSakuraRain: () => {
+        if (!sakuraRainManager && scene) {
+          sakuraRainManager = new SakuraRainManager(THREE, scene);
+          sakuraRainManager.setEnabled(currentSettings.sakuraRain !== false);
+        }
+      },
       animate,
       updateIgnoreMouseState: () => updateIgnoreMouseState()
     },
@@ -541,6 +549,7 @@ const renderLoopDelegates = createRenderLoopDelegates({
     gridHelper,
     renderer,
     scene,
+    sakuraRainManager,
     renderPreviewViewport,
     updateFPSCamera,
     isSettingsOpen,

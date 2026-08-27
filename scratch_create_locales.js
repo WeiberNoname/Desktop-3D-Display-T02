@@ -1447,8 +1447,108 @@ const newTranslations = {
   }
 };
 
+// 12-Language Atmosphere & Sakura Rain Translations
+const sakuraTranslations = {
+  "en": {
+    "tab_atmosphere": "🌸 Atmosphere",
+    "atmosphere_fx_title": "🌸 Visual FX & Ambient Atmosphere",
+    "sakura_rain": "🌸 Sakura Petal Rain",
+    "sakura_rain_sub": "(Gently falling cherry blossoms)",
+    "sakura_hint_title": "Sakura Atmosphere",
+    "sakura_hint_body": "Natural 3D tumbling petals with wind fluttering physics and dynamic lighting."
+  },
+  "zh-CN": {
+    "tab_atmosphere": "🌸 氛围特效",
+    "atmosphere_fx_title": "🌸 视觉特效与环境氛围",
+    "sakura_rain": "🌸 樱花飘落特效",
+    "sakura_rain_sub": "(在吉祥物周围飘落唯美粉色樱花瓣)",
+    "sakura_hint_title": "樱花氛围",
+    "sakura_hint_body": "具有自然翻转、随风飘动物理与动态光影的 3D 樱花瓣。"
+  },
+  "zh-TW": {
+    "tab_atmosphere": "🌸 氛圍特效",
+    "atmosphere_fx_title": "🌸 視覺特效與環境氛圍",
+    "sakura_rain": "🌸 櫻花飄落特效",
+    "sakura_rain_sub": "(在吉祥物周圍飄落唯美粉色櫻花瓣)",
+    "sakura_hint_title": "櫻花氛圍",
+    "sakura_hint_body": "具有自然翻轉、隨風飄動物理與動態光影的 3D 櫻花瓣。"
+  },
+  "ja": {
+    "tab_atmosphere": "🌸 演出効果",
+    "atmosphere_fx_title": "🌸 視覚効果と環境の演出",
+    "sakura_rain": "🌸 桜の花びらエフェクト",
+    "sakura_rain_sub": "(キャラクターの周りに舞い散る桜の花びら)",
+    "sakura_hint_title": "桜の演出",
+    "sakura_hint_body": "風になびく物理演算と動的なライティングを備えた立体的な桜の花びら。"
+  },
+  "ko": {
+    "tab_atmosphere": "🌸 분위기 효과",
+    "atmosphere_fx_title": "🌸 시각 효과 및 환경 분위기",
+    "sakura_rain": "🌸 벚꽃 비 효과",
+    "sakura_rain_sub": "(캐릭터 주변에 흩날리는 벚꽃 잎)",
+    "sakura_hint_title": "벚꽃 분위기",
+    "sakura_hint_body": "바람에 흩날리는 물리 엔진과 동적 조명이 적용된 3D 벚꽃 잎."
+  },
+  "fr": {
+    "tab_atmosphere": "🌸 Ambiance",
+    "atmosphere_fx_title": "🌸 Effets Visuels & Atmosphère Ambiante",
+    "sakura_rain": "🌸 Pluie de pétales de Sakura",
+    "sakura_rain_sub": "(Pétales de cerisier flottant doucement)",
+    "sakura_hint_title": "Atmosphère Sakura",
+    "sakura_hint_body": "Pétales 3D avec physique de flottement au vent et éclairage dynamique."
+  },
+  "de": {
+    "tab_atmosphere": "🌸 Atmosphäre",
+    "atmosphere_fx_title": "🌸 Visuelle Effekte & Umgebungsatmosphäre",
+    "sakura_rain": "🌸 Sakura-Blütenregen",
+    "sakura_rain_sub": "(Sanft fallende Kirschblütenblätter)",
+    "sakura_hint_title": "Sakura-Atmosphäre",
+    "sakura_hint_body": "Natürlich wirbelnde 3D-Blütenblätter mit Windphysik und dynamischer Beleuchtung."
+  },
+  "es": {
+    "tab_atmosphere": "🌸 Atmósfera",
+    "atmosphere_fx_title": "🌸 Efectos Visuales y Atmósfera Ambiental",
+    "sakura_rain": "🌸 Lluvia de pétalos Sakura",
+    "sakura_rain_sub": "(Pétalos de flor de cerezo cayendo suavemente)",
+    "sakura_hint_title": "Atmósfera Sakura",
+    "sakura_hint_body": "Pétalos 3D con física de aleteo por el viento e iluminación dinámica."
+  },
+  "es-419": {
+    "tab_atmosphere": "🌸 Atmósfera",
+    "atmosphere_fx_title": "🌸 Efectos Visuales y Atmósfera Ambiental",
+    "sakura_rain": "🌸 Lluvia de pétalos Sakura",
+    "sakura_rain_sub": "(Pétalos de flor de cerezo cayendo suavemente)",
+    "sakura_hint_title": "Atmósfera Sakura",
+    "sakura_hint_body": "Pétalos 3D con física de aleteo por el viento e iluminación dinámica."
+  },
+  "it": {
+    "tab_atmosphere": "🌸 Atmosfera",
+    "atmosphere_fx_title": "🌸 Effetti Visivi e Atmosfera Ambientale",
+    "sakura_rain": "🌸 Pioggia di petali di Sakura",
+    "sakura_rain_sub": "(Petali di ciliegio che cadono dolcemente)",
+    "sakura_hint_title": "Atmosfera Sakura",
+    "sakura_hint_body": "Petali 3D con fisica di fluttuazione al vento e illuminazione dinamica."
+  },
+  "pt-BR": {
+    "tab_atmosphere": "🌸 Atmosfera",
+    "atmosphere_fx_title": "🌸 Efeitos Visuais e Atmosfera Ambiente",
+    "sakura_rain": "🌸 Chuva de pétalas de Sakura",
+    "sakura_rain_sub": "(Pétalas de cerejeira caindo suavemente)",
+    "sakura_hint_title": "Atmosfera Sakura",
+    "sakura_hint_body": "Pétalas 3D com física de flutuação ao vento e iluminação dinâmica."
+  },
+  "ru": {
+    "tab_atmosphere": "🌸 Атмосфера",
+    "atmosphere_fx_title": "🌸 Визуальные эффекты и атмосфера",
+    "sakura_rain": "🌸 Дождь из лепестков сакуры",
+    "sakura_rain_sub": "(Нежно падающие лепестки цветущей сакуры)",
+    "sakura_hint_title": "Атмосфера сакуры",
+    "sakura_hint_body": "Лепестки 3D с физикой колыхания на ветру и динамическим освещением."
+  }
+};
+
 // Auto-fallback builder: merge English keys into all 12 core supported languages
-const masterEN = newTranslations["en"];
+const masterEN = Object.assign({}, newTranslations["en"], sakuraTranslations["en"]);
 const supportedCodes = [
   'en', 'zh-CN', 'zh-TW', 'ja', 'ko', 'fr', 'de', 'es', 'es-419', 'it', 'pt-BR', 'ru'
 ];
@@ -1461,7 +1561,9 @@ supportedCodes.forEach(code => {
   }
   const filePath = path.join(dir, 'translation.json');
   // Fallback merge guarantees that if a key is missing in a specific language, it safely uses master English
-  const merged = Object.assign({}, masterEN, newTranslations[code] || {});
+  const merged = Object.assign({}, masterEN, newTranslations[code] || {}, sakuraTranslations[code] || {});
+  if (!merged.btn_save && merged.save_btn) merged.btn_save = merged.save_btn;
+  if (!merged.save_btn && merged.btn_save) merged.save_btn = merged.btn_save;
   fs.writeFileSync(filePath, JSON.stringify(merged, null, 2) + '\n', 'utf8');
   count++;
   console.log(`[${count}/12] Generated locale file: ${filePath} (${Object.keys(merged).length} keys)`);
