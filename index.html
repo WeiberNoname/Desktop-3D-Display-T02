@@ -43,6 +43,8 @@
         <button class="studio-tab-btn" data-tab="tab-motion" data-i18n="tab_motion">🌀 Motion</button>
         <button class="studio-tab-btn" data-tab="tab-lighting" data-i18n="tab_lighting">🔦 Lighting</button>
         <button class="studio-tab-btn" data-tab="tab-atmosphere" data-i18n="tab_atmosphere">🌸 Atmosphere</button>
+        <button class="studio-tab-btn" data-tab="tab-sound" data-i18n="tab_sound">🎵 Sound</button>
+        <button class="studio-tab-btn" data-tab="tab-texture" data-i18n="tab_texture">🎨 Texture</button>
         <button class="studio-tab-btn" data-tab="tab-physics" data-i18n="tab_physics">⚡ Physics</button>
         <button class="studio-tab-btn" data-tab="tab-camera" data-i18n="tab_camera">🎥 Camera</button>
         <button class="studio-tab-btn" data-tab="tab-system" data-i18n="tab_system">⚙️ System</button>
@@ -293,6 +295,94 @@
         </div>
       </div>
 
+      <!-- Tab: Sound & Procedural Audio FX -->
+      <div id="tab-sound" class="studio-tab-content">
+        <div class="settings-section">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h4 style="margin: 0;" data-i18n="sound_title">🎵 Audio & Ambient Synthesizer</h4>
+            <div class="setting-item checkbox" style="margin: 0; padding: 0;">
+              <input type="checkbox" id="sound-master-enable" checked>
+              <label for="sound-master-enable" data-i18n="sound_master_enable" style="margin-bottom: 0;">Master Audio</label>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <label for="sound-master-vol"><span data-i18n="sound_master_vol">Master Audio Volume</span>: <span id="val-sound-master-vol">80%</span></label>
+            <input type="range" id="sound-master-vol" min="0.0" max="1.0" step="0.05" value="0.80">
+          </div>
+
+          <div class="sound-tracks-grid">
+            <!-- Track 1: Snow -->
+            <div class="sound-card" id="sound-card-snow">
+              <div class="sound-card-header">
+                <div class="sound-card-info">
+                  <span class="sound-card-icon">❄️</span>
+                  <div>
+                    <h5 data-i18n="sound_snow_title">Snow Atmosphere</h5>
+                    <p class="sound-card-desc" data-i18n="sound_snow_desc">Winter wind breeze & soft crystalline chimes</p>
+                  </div>
+                </div>
+                <button id="btn-sound-snow-play" class="btn sound-play-btn" data-i18n="sound_play">▶ Play</button>
+              </div>
+              <div class="sound-card-controls">
+                <div class="sound-vol-row">
+                  <label for="sound-snow-vol"><span data-i18n="sound_vol">Volume</span>: <span id="val-sound-snow-vol">70%</span></label>
+                  <input type="range" id="sound-snow-vol" min="0.0" max="1.0" step="0.05" value="0.70">
+                </div>
+                <div class="setting-item checkbox sound-sync-checkbox">
+                  <input type="checkbox" id="sound-snow-sync" checked>
+                  <label for="sound-snow-sync" data-i18n="sound_snow_sync">Auto-play with Snow Fall FX</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Track 2: Sakura -->
+            <div class="sound-card" id="sound-card-sakura">
+              <div class="sound-card-header">
+                <div class="sound-card-info">
+                  <span class="sound-card-icon">🌸</span>
+                  <div>
+                    <h5 data-i18n="sound_sakura_title">Sakura Spring Melody</h5>
+                    <p class="sound-card-desc" data-i18n="sound_sakura_desc">Japanese pentatonic koto arpeggios & spring breeze</p>
+                  </div>
+                </div>
+                <button id="btn-sound-sakura-play" class="btn sound-play-btn" data-i18n="sound_play">▶ Play</button>
+              </div>
+              <div class="sound-card-controls">
+                <div class="sound-vol-row">
+                  <label for="sound-sakura-vol"><span data-i18n="sound_vol">Volume</span>: <span id="val-sound-sakura-vol">70%</span></label>
+                  <input type="range" id="sound-sakura-vol" min="0.0" max="1.0" step="0.05" value="0.70">
+                </div>
+                <div class="setting-item checkbox sound-sync-checkbox">
+                  <input type="checkbox" id="sound-sakura-sync" checked>
+                  <label for="sound-sakura-sync" data-i18n="sound_sakura_sync">Auto-play with Sakura Rain FX</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Track 3: Drum Melody -->
+            <div class="sound-card" id="sound-card-drum">
+              <div class="sound-card-header">
+                <div class="sound-card-info">
+                  <span class="sound-card-icon">🥁</span>
+                  <div>
+                    <h5 data-i18n="sound_drum_title">Simple Drum Melody</h5>
+                    <p class="sound-card-desc" data-i18n="sound_drum_desc">Upbeat 16-step rhythmic drum groove & cheerful synth</p>
+                  </div>
+                </div>
+                <button id="btn-sound-drum-play" class="btn sound-play-btn" data-i18n="sound_play">▶ Play</button>
+              </div>
+              <div class="sound-card-controls">
+                <div class="sound-vol-row">
+                  <label for="sound-drum-vol"><span data-i18n="sound_vol">Volume</span>: <span id="val-sound-drum-vol">70%</span></label>
+                  <input type="range" id="sound-drum-vol" min="0.0" max="1.0" step="0.05" value="0.70">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Tab 5: Physics Engine -->
       <div id="tab-physics" class="studio-tab-content">
         <div class="settings-section">
@@ -382,6 +472,78 @@
             <div class="help-row">
               <span data-i18n="reset_view">Opposite / Reset</span>
               <strong data-i18n="reset_view_sub">Key 9 (180°) / Key . or F (Reset)</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Texture & Custom 3D Mesh -->
+      <div id="tab-texture" class="studio-tab-content">
+        <div class="settings-section">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h4 style="margin: 0;" data-i18n="texture_title">🎨 Custom Texture & Flag Cloth</h4>
+            <button id="texture-reset-btn" class="btn" style="padding: 3px 8px; font-size: 11px; cursor: pointer; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);" data-i18n="texture_reset_btn">🔄 Reset</button>
+          </div>
+
+          <!-- Image Upload / Dropzone -->
+          <input type="file" id="texture-file-input" accept="image/*" style="display: none;">
+          <div id="texture-dropzone" class="texture-dropzone">
+            <span class="texture-dropzone-icon">🖼️</span>
+            <strong style="font-size: 12px; margin-bottom: 4px;" data-i18n="texture_drop_title">Upload Custom Texture Image</strong>
+            <span style="font-size: 10px; color: #94a3b8; margin-bottom: 8px;" data-i18n="texture_drop_sub">Drag & drop PNG, JPG, WebP or SVG here</span>
+            <button id="texture-browse-btn" class="btn" style="padding: 5px 14px; font-size: 11px; font-weight: 600; background: rgba(243, 156, 18, 0.25); border: 1px solid rgba(243, 156, 18, 0.5); color: #f39c12; cursor: pointer;" data-i18n="texture_browse_btn">📁 Choose Image</button>
+          </div>
+
+          <!-- Active Texture Preview Container -->
+          <div class="texture-preview-container">
+            <img id="texture-preview-img" class="texture-preview-thumbnail" alt="Texture Preview" src="">
+            <div class="texture-info">
+              <div id="texture-filename" class="texture-info-title">Preset: default</div>
+              <div class="texture-info-sub" data-i18n="texture_active_applied">Active Texture Applied to Mesh</div>
+            </div>
+          </div>
+
+          <!-- Preset Flag Buttons -->
+          <label style="margin-top: 8px; margin-bottom: 6px; font-size: 11px; font-weight: 600; display: block;" data-i18n="texture_presets_title">🏳️ Preset Flag Styles</label>
+          <div class="flag-presets-grid">
+            <button class="flag-preset-btn" data-preset="default">🦁 <span data-i18n="preset_default">Royal Tricolor</span></button>
+            <button class="flag-preset-btn" data-preset="world">🌐 <span data-i18n="preset_world">World Globe</span></button>
+            <button class="flag-preset-btn" data-preset="cyber">⚡ <span data-i18n="preset_cyber">Cyber Neon</span></button>
+            <button class="flag-preset-btn" data-preset="star">⭐ <span data-i18n="preset_star">Royal Star</span></button>
+            <button class="flag-preset-btn" data-preset="rainbow">🌈 <span data-i18n="preset_rainbow">Pride Rainbow</span></button>
+          </div>
+
+          <!-- Real-Time Cloth Wave & Wind Sliders -->
+          <div class="settings-section" style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1);">
+            <h5 style="margin: 0 0 8px 0; font-size: 11.5px;" data-i18n="flag_wind_title">💨 Flag Wind Wave Physics</h5>
+            <div class="setting-item">
+              <label for="flag-wind-speed"><span data-i18n="flag_wind_speed">Wind Speed</span>: <span id="val-flag-wind-speed">3.5</span>x</label>
+              <input type="range" id="flag-wind-speed" min="0.5" max="10.0" step="0.5" value="3.5">
+            </div>
+            <div class="setting-item">
+              <label for="flag-wave-intensity"><span data-i18n="flag_wave_intensity">Wave Amplitude</span>: <span id="val-flag-wave-intensity">0.35</span>x</label>
+              <input type="range" id="flag-wave-intensity" min="0.05" max="1.50" step="0.05" value="0.35">
+            </div>
+          </div>
+
+          <!-- Texture Mapping & Shader Controls -->
+          <div class="settings-section" style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1);">
+            <h5 style="margin: 0 0 8px 0; font-size: 11.5px;" data-i18n="texture_mapping_title">📐 Mapping & Surface Shaders</h5>
+            <div class="setting-item">
+              <label for="texture-repeat-x"><span data-i18n="texture_repeat_x">Texture Repeat X</span>: <span id="val-texture-repeat-x">1.0</span>x</label>
+              <input type="range" id="texture-repeat-x" min="1.0" max="6.0" step="0.5" value="1.0">
+            </div>
+            <div class="setting-item">
+              <label for="texture-repeat-y"><span data-i18n="texture_repeat_y">Texture Repeat Y</span>: <span id="val-texture-repeat-y">1.0</span>x</label>
+              <input type="range" id="texture-repeat-y" min="1.0" max="6.0" step="0.5" value="1.0">
+            </div>
+            <div class="setting-item">
+              <label for="texture-roughness"><span data-i18n="texture_roughness">Surface Roughness</span>: <span id="val-texture-roughness">0.50</span></label>
+              <input type="range" id="texture-roughness" min="0.0" max="1.0" step="0.05" value="0.50">
+            </div>
+            <div class="setting-item">
+              <label for="texture-metalness"><span data-i18n="texture_metalness">Surface Metalness</span>: <span id="val-texture-metalness">0.05</span></label>
+              <input type="range" id="texture-metalness" min="0.0" max="1.0" step="0.05" value="0.05">
             </div>
           </div>
         </div>

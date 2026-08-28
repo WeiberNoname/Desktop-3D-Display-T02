@@ -5,6 +5,7 @@
  */
 
 import { updatePerformanceMonitor } from '../ui/PerformanceMonitorUI.js';
+import { updateFlagWave } from './FlagMeshBuilder.js';
 
 export function updateAnimationFrame(deps) {
   const {
@@ -35,6 +36,17 @@ export function updateAnimationFrame(deps) {
   // 1. Update skeletal animation if active
   if (mixer) {
     mixer.update(delta);
+  }
+
+  // 1.2 Update Waving Flag Cloth Physics if active
+  if (innerModelGroup && innerModelGroup.userData && innerModelGroup.userData.flagClothMesh) {
+    updateFlagWave(
+      innerModelGroup.userData.flagClothMesh,
+      delta,
+      elapsed,
+      currentSettings.flagWindSpeed || 3.5,
+      currentSettings.flagWaveIntensity || 0.35
+    );
   }
 
   // 1.5 Update 3D Atmosphere Effects (Sakura Petals & Snow Fall)

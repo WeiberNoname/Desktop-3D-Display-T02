@@ -4,6 +4,8 @@
  * click count persistence, and Three.js camera aspect ratio viewport resizing.
  */
 
+import { soundManager } from './SoundManager.js';
+
 export function triggerInteraction(deps) {
   const {
     animationState,
@@ -14,6 +16,9 @@ export function triggerInteraction(deps) {
     currentSettings,
     saveSettingsFile
   } = deps;
+
+  soundManager.resumeAudioContext();
+  soundManager.playInteractionSfx();
 
   if (animationState.type === 'interact') return;
 

@@ -68,14 +68,17 @@ The application automatically detects, centers, and renders custom 3D assets:
 
 ## ⚙️ 3D Studio Settings Control Suite
 
-The Settings Panel is divided into 6 categorized studio tabs:
+The Settings Panel is organized into 8 categorized studio tabs:
 
 1. **🎯 Display**: Active mascot selector, preview thumbnail generator grid, animation selector, window width/height, and model scale sliders.
-2. **🌀 Motion**: Idle bobbing, position locking, view-only mode, Dynamic Battery Saver (auto-throttles FPS when idle/unfocused), GPU & mouse optimizations, X/Y/Z axis spinning controls.
+2. **🌀 Motion**: Idle bobbing, position locking, view-only mode, Dynamic Battery Saver (auto-throttles FPS when idle/unfocused), GPU & mouse optimizations, X/Y/Z axis spinning controls, and live Performance Monitor.
 3. **🔦 Lighting**: Multi-source stage spotlight controls (up to 10 lights), master ambient light dimmer, Dark Stage Mode, and Dual Concert presets.
-4. **⚡ Physics**: Enable physics engine, gravity slider, bounciness elasticity, ground landing collider, and momentum throw info.
-5. **🎥 Camera**: First-person camera mode toggle, spatial XYZ coordinate HUD overlay, 3D ground reference grid, viewport controls.
-6. **⚙️ System**: Language selector (12 core locales), UI font scale slider, settings icon placement toggle, collapsible diagnostic log console, and Steam stats reset button.
+4. **🌸 Atmosphere**: Sakura Blossom Rain particle engine, Winter Snowfall simulation, particle counts, and fall speeds.
+5. **🎵 Sound**: Ambient weather synthesizer (Sakura breeze & winter wind), 16-step rhythmic drum loops, atmosphere sync toggles, master/track volume sliders, and mascot interaction SFX.
+6. **🎨 Texture**: Custom image texture uploader (drag & drop or file browse for PNG, JPG, WebP, SVG), native 3D Waving Country Flag mesh with real-time harmonic wind billowing physics, preset flag styles, wind speed/amplitude tuning, and texture repeat/roughness/metalness shader controls.
+7. **⚡ Physics**: Enable momentum physics engine, gravity slider, bounciness elasticity, ground landing collider, and momentum throw info.
+8. **🎥 Camera**: First-person camera mode toggle, spatial XYZ coordinate HUD overlay, 3D ground reference grid, viewport controls.
+9. **⚙️ System**: Language selector (12 core locales), UI font scale slider, settings icon placement toggle, and configuration management.
 
 ---
 

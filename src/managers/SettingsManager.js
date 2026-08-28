@@ -38,7 +38,22 @@ export class SettingsManager {
       clickCount: 0,
       fontSizeScale: 1.0,
       targetFps: 60,
-      language: 'en'
+      language: 'en',
+      soundMuted: false,
+      soundMasterVolume: 0.8,
+      soundSnowVolume: 0.7,
+      soundSakuraVolume: 0.7,
+      soundDrumVolume: 0.7,
+      soundSnowSync: true,
+      soundSakuraSync: true,
+      customTexturePath: '',
+      flagWindSpeed: 3.5,
+      flagWaveIntensity: 0.35,
+      textureRepeatX: 1.0,
+      textureRepeatY: 1.0,
+      textureRoughness: 0.50,
+      textureMetalness: 0.05,
+      flagPreset: 'default'
     };
   }
 
@@ -84,6 +99,13 @@ clickCount=0
 fontSizeScale=1.0
 targetFps=60
 sakuraRain=true
+soundMuted=false
+soundMasterVolume=0.8
+soundSnowVolume=0.7
+soundSakuraVolume=0.7
+soundDrumVolume=0.7
+soundSnowSync=true
+soundSakuraSync=true
 language=en`;
 
     if (!filePath) {
@@ -168,6 +190,21 @@ language=en`;
             if (key === 'clickCount') { currentSettings.clickCount = parseInt(val, 10) || 0; validKeysParsed++; }
             if (key === 'fontSizeScale') { currentSettings.fontSizeScale = parseFloat(val) || 1.0; validKeysParsed++; }
             if (key === 'targetFps') { currentSettings.targetFps = parseInt(val, 10) || 60; validKeysParsed++; }
+            if (key === 'soundMuted') { currentSettings.soundMuted = (val === 'true'); validKeysParsed++; }
+            if (key === 'soundMasterVolume') { currentSettings.soundMasterVolume = parseFloat(val) || 0.8; validKeysParsed++; }
+            if (key === 'soundSnowVolume') { currentSettings.soundSnowVolume = parseFloat(val) || 0.7; validKeysParsed++; }
+            if (key === 'soundSakuraVolume') { currentSettings.soundSakuraVolume = parseFloat(val) || 0.7; validKeysParsed++; }
+            if (key === 'soundDrumVolume') { currentSettings.soundDrumVolume = parseFloat(val) || 0.7; validKeysParsed++; }
+            if (key === 'soundSnowSync') { currentSettings.soundSnowSync = (val !== 'false'); validKeysParsed++; }
+            if (key === 'soundSakuraSync') { currentSettings.soundSakuraSync = (val !== 'false'); validKeysParsed++; }
+            if (key === 'customTexturePath') { currentSettings.customTexturePath = val || ''; validKeysParsed++; }
+            if (key === 'flagWindSpeed') { currentSettings.flagWindSpeed = parseFloat(val) || 3.5; validKeysParsed++; }
+            if (key === 'flagWaveIntensity') { currentSettings.flagWaveIntensity = parseFloat(val) || 0.35; validKeysParsed++; }
+            if (key === 'textureRepeatX') { currentSettings.textureRepeatX = parseFloat(val) || 1.0; validKeysParsed++; }
+            if (key === 'textureRepeatY') { currentSettings.textureRepeatY = parseFloat(val) || 1.0; validKeysParsed++; }
+            if (key === 'textureRoughness') { currentSettings.textureRoughness = parseFloat(val) !== undefined ? parseFloat(val) : 0.50; validKeysParsed++; }
+            if (key === 'textureMetalness') { currentSettings.textureMetalness = parseFloat(val) !== undefined ? parseFloat(val) : 0.05; validKeysParsed++; }
+            if (key === 'flagPreset') { currentSettings.flagPreset = val || 'default'; validKeysParsed++; }
             if (key === 'language') { currentSettings.language = val || 'en'; validKeysParsed++; }
           }
         });
@@ -243,6 +280,21 @@ activeAnimation=${currentSettings.activeAnimation}
 clickCount=${currentSettings.clickCount}
 fontSizeScale=${currentSettings.fontSizeScale}
 targetFps=${currentSettings.targetFps || 60}
+soundMuted=${currentSettings.soundMuted === true}
+soundMasterVolume=${currentSettings.soundMasterVolume !== undefined ? currentSettings.soundMasterVolume : 0.8}
+soundSnowVolume=${currentSettings.soundSnowVolume !== undefined ? currentSettings.soundSnowVolume : 0.7}
+soundSakuraVolume=${currentSettings.soundSakuraVolume !== undefined ? currentSettings.soundSakuraVolume : 0.7}
+soundDrumVolume=${currentSettings.soundDrumVolume !== undefined ? currentSettings.soundDrumVolume : 0.7}
+soundSnowSync=${currentSettings.soundSnowSync !== false}
+soundSakuraSync=${currentSettings.soundSakuraSync !== false}
+customTexturePath=${currentSettings.customTexturePath || ''}
+flagWindSpeed=${currentSettings.flagWindSpeed || 3.5}
+flagWaveIntensity=${currentSettings.flagWaveIntensity || 0.35}
+textureRepeatX=${currentSettings.textureRepeatX || 1.0}
+textureRepeatY=${currentSettings.textureRepeatY || 1.0}
+textureRoughness=${currentSettings.textureRoughness !== undefined ? currentSettings.textureRoughness : 0.50}
+textureMetalness=${currentSettings.textureMetalness !== undefined ? currentSettings.textureMetalness : 0.05}
+flagPreset=${currentSettings.flagPreset || 'default'}
 language=${currentSettings.language}`;
 
     try {

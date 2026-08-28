@@ -13,6 +13,7 @@ import {
   scanForModels as scanForModelsUtil,
   detectAndLoadAsset as detectAndLoadAssetUtil,
   fallbackToProcedural as fallbackToProceduralUtil,
+  loadFlagModel as loadFlagModelUtil,
   loadCustomModel as loadCustomModelUtil,
   applySelectedAnimation as applySelectedAnimationUtil
 } from './src/core/ModelLoader.js';
@@ -24,6 +25,9 @@ import {
   forceRefreshAllPreviews as forceRefreshAllPreviewsUtil
 } from './src/ui/PreviewGenerator.js';
 import { setupStudioTabs as setupStudioTabsUtil } from './src/ui/StudioTabManager.js';
+import { setupSoundTabUI } from './src/ui/SoundTabUI.js';
+import { setupTextureTabUI } from './src/ui/TextureTabUI.js';
+import { soundManager } from './src/core/SoundManager.js';
 import { renderSpotlightCardsUI as renderSpotlightCardsUIUtil, hexToRgb, rgbToHex } from './src/ui/SpotlightCardsUI.js';
 import {
   populateAnimationDropdown as populateAnimationDropdownUtil,
@@ -95,6 +99,8 @@ function updateGearPosition() {
 }
 
 async function init() {
+  physicsEngine.onBounce = (vel) => soundManager.playBounceSfx(vel);
+
   await initializeAppUtil({
     THREE,
     ipcRenderer,
@@ -289,6 +295,7 @@ function getModelLoaderCtx() {
     },
     callbacks: {
       createMascot,
+      createFlag: () => loadFlagModel(),
       generateModelPreview,
       populateAnimationDropdown: () => {
         if (typeof populateAnimationDropdown === 'function') populateAnimationDropdown();
@@ -369,6 +376,7 @@ function getPreviewGeneratorCtx() {
 const scanForModels = modelDelegates.scanForModels;
 const detectAndLoadAsset = modelDelegates.detectAndLoadAsset;
 const fallbackToProcedural = modelDelegates.fallbackToProcedural;
+const loadFlagModel = () => loadFlagModelUtil(getModelLoaderCtx());
 const loadCustomModel = modelDelegates.loadCustomModel;
 const applySelectedAnimation = modelDelegates.applySelectedAnimation;
 const generateModelPreview = modelDelegates.generateModelPreview;
@@ -408,6 +416,7 @@ function setupSettingsUI() {
     setupStudioTabsUtil,
     applySelectedAnimation,
     fallbackToProcedural,
+    loadFlagModel,
     loadCustomModel,
     getAssetsPath,
     path,
@@ -445,6 +454,7 @@ function setupSettingsUI() {
         getAssetsPath,
         ipcRenderer,
         fallbackToProcedural,
+        loadFlagModel,
         loadCustomModel,
         applySelectedAnimation,
         updateGearPosition,
@@ -458,6 +468,15 @@ function setupSettingsUI() {
   });
 
   settingsUIDelegates.setupSettingsUI();
+  setupSoundTabUI({ currentSettings, saveSettingsFile, t });
+  setupTextureTabUI({
+    currentSettings,
+    saveSettingsFile,
+    t,
+    THREE,
+    getInnerModelGroup: () => innerModelGroup,
+    forceRefreshAllPreviews
+  });
 }
 
 function resetCameraAndPosition() {

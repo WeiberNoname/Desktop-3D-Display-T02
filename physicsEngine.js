@@ -29,6 +29,9 @@ export class PhysicsEngine {
     this.dragHistory = [];
     this.maxHistorySize = 5;
     this.throwMultiplier = 0.005;
+
+    // Optional bounce collision callback hook
+    this.onBounce = null;
   }
 
   /**
@@ -154,6 +157,9 @@ export class PhysicsEngine {
       
       // Bounce reaction
       if (Math.abs(this.velocity.y) > 0.1) {
+        if (this.onBounce && Math.abs(this.velocity.y) > 0.4) {
+          try { this.onBounce(Math.abs(this.velocity.y)); } catch (e) {}
+        }
         this.velocity.y = -this.velocity.y * this.restitution;
       } else {
         this.velocity.y = 0; // Rest on ground

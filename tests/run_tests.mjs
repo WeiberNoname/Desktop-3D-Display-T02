@@ -146,4 +146,116 @@ assert.strictEqual(mainContent.includes('startSteamRepaintLoop()'), true, 'main.
 assert.strictEqual(mainContent.includes('stopSteamRepaintLoop()'), true, 'main.js must dynamically stop Steam repaint loop');
 console.log('✅ Electron Security Bridge & Idle Optimization tests PASSED.');
 
-console.log('\n🎉 ALL 6 UNIT TEST SUITES PASSED CLEANLY (100% SUCCESS)');
+// 7. Test SoundManager State, Volume Normalization & Snapshot
+console.log('▶ Testing SoundManager volume clamping & state snapshot...');
+import('../src/core/SoundManager.js').then(({ SoundManager }) => {
+  const sm = new SoundManager();
+  assert.strictEqual(sm.isMuted, false, 'Default isMuted should be false');
+  assert.strictEqual(sm.masterVolume, 0.8, 'Default masterVolume should be 0.8');
+  assert.strictEqual(sm.isPlaying('snow'), false, 'Default snow playing should be false');
+  assert.strictEqual(sm.isPlaying('sakura'), false, 'Default sakura playing should be false');
+  assert.strictEqual(sm.isPlaying('drum'), false, 'Default drum playing should be false');
+
+  // Test volume clamping
+  sm.setMasterVolume(1.5);
+  assert.strictEqual(sm.masterVolume, 1.0, 'Master volume should clamp to 1.0');
+  sm.setMasterVolume(-0.5);
+  assert.strictEqual(sm.masterVolume, 0.0, 'Master volume should clamp to 0.0');
+
+  sm.setTrackVolume('snow', 0.85);
+  assert.strictEqual(sm.tracks.snow.volume, 0.85, 'Track snow volume should be 0.85');
+  sm.setTrackVolume('sakura', 0.65);
+  assert.strictEqual(sm.tracks.sakura.volume, 0.65, 'Track sakura volume should be 0.65');
+  sm.setTrackVolume('drum', 0.95);
+  assert.strictEqual(sm.tracks.drum.volume, 0.95, 'Track drum volume should be 0.95');
+
+  const snap = sm.getSnapshot();
+  assert.strictEqual(snap.snowVolume, 0.85, 'Snapshot snowVolume should be 0.85');
+  assert.strictEqual(snap.sakuraVolume, 0.65, 'Snapshot sakuraVolume should be 0.65');
+  assert.strictEqual(snap.drumVolume, 0.95, 'Snapshot drumVolume should be 0.95');
+
+  // Test syncAtmosphere
+  sm.syncAtmosphere({
+    soundMuted: true,
+    soundMasterVolume: 0.5,
+    soundSnowVolume: 0.4,
+    soundSakuraVolume: 0.9,
+    sakuraRain: true,
+    soundSakuraSync: true
+  });
+  assert.strictEqual(sm.isMuted, true, 'syncAtmosphere should set isMuted');
+  assert.strictEqual(sm.masterVolume, 0.5, 'syncAtmosphere should set masterVolume');
+  assert.strictEqual(sm.tracks.snow.volume, 0.4, 'syncAtmosphere should set snow track volume');
+  assert.strictEqual(sm.tracks.sakura.volume, 0.9, 'syncAtmosphere should set sakura track volume');
+
+  console.log('✅ SoundManager unit tests PASSED.');
+
+  // Test 8: FlagMeshBuilder and Wave Simulation
+  console.log('▶ Testing FlagMeshBuilder presets and cloth wave math...');
+  import('../src/core/FlagMeshBuilder.js').then(({ createPresetFlagTexture, updateFlagWave }) => {
+    const defaultTex = createPresetFlagTexture('default');
+    assert.ok(defaultTex && defaultTex.startsWith('data:image/png;base64,'), 'Default preset should return base64 PNG data URL');
+
+    const worldTex = createPresetFlagTexture('world');
+    assert.ok(worldTex && worldTex.startsWith('data:image/png;base64,'), 'World preset should return base64 PNG data URL');
+
+    const cyberTex = createPresetFlagTexture('cyber');
+    assert.ok(cyberTex && cyberTex.startsWith('data:image/png;base64,'), 'Cyber preset should return base64 PNG data URL');
+
+    const starTex = createPresetFlagTexture('star');
+    assert.ok(starTex && starTex.startsWith('data:image/png;base64,'), 'Star preset should return base64 PNG data URL');
+
+    const rainbowTex = createPresetFlagTexture('rainbow');
+    assert.ok(rainbowTex && rainbowTex.startsWith('data:image/png;base64,'), 'Rainbow preset should return base64 PNG data URL');
+
+    // Test wave physics math on mock subdivided geometry
+    const vertCount = 100;
+    const initialPositions = new Float32Array(vertCount * 3);
+    for (let i = 0; i < vertCount; i++) {
+      initialPositions[i * 3] = (i % 10) * 0.2; // x
+      initialPositions[i * 3 + 1] = Math.floor(i / 10) * 0.15; // y
+      initialPositions[i * 3 + 2] = 0; // z
+    }
+    const currentPositions = new Float32Array(initialPositions);
+
+    const mockClothMesh = {
+      geometry: {
+        userData: {
+          initialPositions: initialPositions
+        },
+        attributes: {
+          position: {
+            array: currentPositions,
+            needsUpdate: false
+          }
+        },
+        computeVertexNormals: () => { mockClothMesh.geometry.normalsComputed = true; }
+      }
+    };
+
+    updateFlagWave(mockClothMesh, 0.016, 1.0, 4.0, 0.4);
+    assert.strictEqual(mockClothMesh.geometry.attributes.position.needsUpdate, true, 'position attribute should mark needsUpdate=true');
+    assert.strictEqual(mockClothMesh.geometry.normalsComputed, true, 'computeVertexNormals should be invoked');
+    
+    // Far end of flag (x > 0) should have modulated Z displacement
+    assert.notStrictEqual(currentPositions[currentPositions.length - 1], 0, 'Flag tail Z coordinate should be billowed by wind');
+
+    console.log('✅ FlagMeshBuilder & wave physics unit tests PASSED.');
+
+    // Test 9: SettingsManager with Texture & Flag Keys
+    console.log('▶ Testing SettingsManager texture & flag key defaults and serialization...');
+    const defaults = SettingsManager.getDefaultSettings();
+    assert.strictEqual(defaults.customTexturePath, '', 'Default customTexturePath should be empty');
+    assert.strictEqual(defaults.flagWindSpeed, 3.5, 'Default flagWindSpeed should be 3.5');
+    assert.strictEqual(defaults.flagWaveIntensity, 0.35, 'Default flagWaveIntensity should be 0.35');
+    assert.strictEqual(defaults.textureRepeatX, 1.0, 'Default textureRepeatX should be 1.0');
+    assert.strictEqual(defaults.textureRepeatY, 1.0, 'Default textureRepeatY should be 1.0');
+    assert.strictEqual(defaults.textureRoughness, 0.50, 'Default textureRoughness should be 0.50');
+    assert.strictEqual(defaults.textureMetalness, 0.05, 'Default textureMetalness should be 0.05');
+    assert.strictEqual(defaults.flagPreset, 'default', 'Default flagPreset should be default');
+
+    console.log('✅ SettingsManager texture configuration unit tests PASSED.');
+    console.log('\n🎉 ALL 9 UNIT TEST SUITES PASSED CLEANLY (100% SUCCESS)');
+  });
+});
+

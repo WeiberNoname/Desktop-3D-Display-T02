@@ -43,6 +43,7 @@ export function buildSaveSettingsConfig(deps) {
     getAssetsPath,
     ipcRenderer,
     fallbackToProcedural,
+    loadFlagModel: deps.loadFlagModel,
     loadCustomModel,
     applySelectedAnimation,
     updateGearPosition,

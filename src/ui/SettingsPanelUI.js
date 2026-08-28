@@ -168,6 +168,82 @@ export function syncSlidersUI(deps) {
   if (ambientIntensitySlider) ambientIntensitySlider.value = currentSettings.ambientIntensity ?? 0.70;
   if (valAmbientIntensity && ambientIntensitySlider) valAmbientIntensity.innerText = parseFloat(ambientIntensitySlider.value).toFixed(2);
 
+  // Sound Tab Sync
+  const soundMasterEnableDom = deps.soundMasterEnableCheck || document.getElementById('sound-master-enable');
+  const soundMasterVolDom = deps.soundMasterVolSlider || document.getElementById('sound-master-vol');
+  const valSoundMasterVolDom = document.getElementById('val-sound-master-vol');
+  const soundSnowVolDom = deps.soundSnowVolSlider || document.getElementById('sound-snow-vol');
+  const valSoundSnowVolDom = document.getElementById('val-sound-snow-vol');
+  const soundSakuraVolDom = deps.soundSakuraVolSlider || document.getElementById('sound-sakura-vol');
+  const valSoundSakuraVolDom = document.getElementById('val-sound-sakura-vol');
+  const soundDrumVolDom = deps.soundDrumVolSlider || document.getElementById('sound-drum-vol');
+  const valSoundDrumVolDom = document.getElementById('val-sound-drum-vol');
+  const soundSnowSyncDom = deps.soundSnowSyncCheck || document.getElementById('sound-snow-sync');
+  const soundSakuraSyncDom = deps.soundSakuraSyncCheck || document.getElementById('sound-sakura-sync');
+
+  if (soundMasterEnableDom) soundMasterEnableDom.checked = currentSettings.soundMuted !== true;
+  if (soundMasterVolDom) {
+    const masterVol = currentSettings.soundMasterVolume !== undefined ? currentSettings.soundMasterVolume : 0.8;
+    soundMasterVolDom.value = masterVol;
+    if (valSoundMasterVolDom) valSoundMasterVolDom.innerText = Math.round(masterVol * 100) + '%';
+  }
+  if (soundSnowVolDom) {
+    const snowVol = currentSettings.soundSnowVolume !== undefined ? currentSettings.soundSnowVolume : 0.7;
+    soundSnowVolDom.value = snowVol;
+    if (valSoundSnowVolDom) valSoundSnowVolDom.innerText = Math.round(snowVol * 100) + '%';
+  }
+  if (soundSakuraVolDom) {
+    const sakuraVol = currentSettings.soundSakuraVolume !== undefined ? currentSettings.soundSakuraVolume : 0.7;
+    soundSakuraVolDom.value = sakuraVol;
+    if (valSoundSakuraVolDom) valSoundSakuraVolDom.innerText = Math.round(sakuraVol * 100) + '%';
+  }
+  if (soundDrumVolDom) {
+    const drumVol = currentSettings.soundDrumVolume !== undefined ? currentSettings.soundDrumVolume : 0.7;
+    soundDrumVolDom.value = drumVol;
+    if (valSoundDrumVolDom) valSoundDrumVolDom.innerText = Math.round(drumVol * 100) + '%';
+  }
+  if (soundSnowSyncDom) soundSnowSyncDom.checked = currentSettings.soundSnowSync !== false;
+  if (soundSakuraSyncDom) soundSakuraSyncDom.checked = currentSettings.soundSakuraSync !== false;
+
+  // Texture & Flag Tab Sync
+  const flagWindSpeedDom = deps.flagWindSpeedSlider || document.getElementById('flag-wind-speed');
+  const valFlagWindSpeedDom = document.getElementById('val-flag-wind-speed');
+  const flagWaveIntensityDom = deps.flagWaveIntensitySlider || document.getElementById('flag-wave-intensity');
+  const valFlagWaveIntensityDom = document.getElementById('val-flag-wave-intensity');
+  const textureRepeatXDom = deps.textureRepeatXSlider || document.getElementById('texture-repeat-x');
+  const valTextureRepeatXDom = document.getElementById('val-texture-repeat-x');
+  const textureRepeatYDom = deps.textureRepeatYSlider || document.getElementById('texture-repeat-y');
+  const valTextureRepeatYDom = document.getElementById('val-texture-repeat-y');
+  const textureRoughnessDom = deps.textureRoughnessSlider || document.getElementById('texture-roughness');
+  const valTextureRoughnessDom = document.getElementById('val-texture-roughness');
+  const textureMetalnessDom = deps.textureMetalnessSlider || document.getElementById('texture-metalness');
+  const valTextureMetalnessDom = document.getElementById('val-texture-metalness');
+
+  if (flagWindSpeedDom) {
+    flagWindSpeedDom.value = currentSettings.flagWindSpeed || 3.5;
+    if (valFlagWindSpeedDom) valFlagWindSpeedDom.innerText = parseFloat(flagWindSpeedDom.value).toFixed(1);
+  }
+  if (flagWaveIntensityDom) {
+    flagWaveIntensityDom.value = currentSettings.flagWaveIntensity || 0.35;
+    if (valFlagWaveIntensityDom) valFlagWaveIntensityDom.innerText = parseFloat(flagWaveIntensityDom.value).toFixed(2);
+  }
+  if (textureRepeatXDom) {
+    textureRepeatXDom.value = currentSettings.textureRepeatX || 1.0;
+    if (valTextureRepeatXDom) valTextureRepeatXDom.innerText = parseFloat(textureRepeatXDom.value).toFixed(1);
+  }
+  if (textureRepeatYDom) {
+    textureRepeatYDom.value = currentSettings.textureRepeatY || 1.0;
+    if (valTextureRepeatYDom) valTextureRepeatYDom.innerText = parseFloat(textureRepeatYDom.value).toFixed(1);
+  }
+  if (textureRoughnessDom) {
+    textureRoughnessDom.value = currentSettings.textureRoughness !== undefined ? currentSettings.textureRoughness : 0.50;
+    if (valTextureRoughnessDom) valTextureRoughnessDom.innerText = parseFloat(textureRoughnessDom.value).toFixed(2);
+  }
+  if (textureMetalnessDom) {
+    textureMetalnessDom.value = currentSettings.textureMetalness !== undefined ? currentSettings.textureMetalness : 0.05;
+    if (valTextureMetalnessDom) valTextureMetalnessDom.innerText = parseFloat(textureMetalnessDom.value).toFixed(2);
+  }
+
   if (updateStageLighting) updateStageLighting();
   if (updateSpotlightPosition) updateSpotlightPosition();
 }

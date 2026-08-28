@@ -36,7 +36,20 @@ export function gatherSettingsFormElements() {
     animSelect: document.getElementById('anim-select'),
     fontScaleSlider: document.getElementById('font-scale'),
     enableStudioLightsCheck: document.getElementById('enable-studio-lights'),
-    ambientIntensitySlider: document.getElementById('ambient-intensity')
+    ambientIntensitySlider: document.getElementById('ambient-intensity'),
+    soundMasterEnableCheck: document.getElementById('sound-master-enable'),
+    soundMasterVolSlider: document.getElementById('sound-master-vol'),
+    soundSnowVolSlider: document.getElementById('sound-snow-vol'),
+    soundSakuraVolSlider: document.getElementById('sound-sakura-vol'),
+    soundDrumVolSlider: document.getElementById('sound-drum-vol'),
+    soundSnowSyncCheck: document.getElementById('sound-snow-sync'),
+    soundSakuraSyncCheck: document.getElementById('sound-sakura-sync'),
+    flagWindSpeedSlider: document.getElementById('flag-wind-speed'),
+    flagWaveIntensitySlider: document.getElementById('flag-wave-intensity'),
+    textureRepeatXSlider: document.getElementById('texture-repeat-x'),
+    textureRepeatYSlider: document.getElementById('texture-repeat-y'),
+    textureRoughnessSlider: document.getElementById('texture-roughness'),
+    textureMetalnessSlider: document.getElementById('texture-metalness')
   };
 }
 
