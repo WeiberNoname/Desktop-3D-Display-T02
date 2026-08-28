@@ -1,6 +1,14 @@
 import assert from 'node:assert';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { PhysicsEngine } from '../physicsEngine.js';
 import { SettingsManager } from '../src/managers/SettingsManager.js';
+import { AppStore } from '../src/managers/AppStore.js';
+import { disposeHierarchy, disposeMaterial } from '../src/core/GPUAssetManager.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 console.log('🧪 Starting Automated Unit Test Suite (Plan 001)...');
 
@@ -43,12 +51,6 @@ console.log('✅ PhysicsEngine tests PASSED.');
 
 // 3. Test 12-Locale Key Parity & default_mascot key
 console.log('▶ Testing 12-Locale Key Parity & default_mascot translations...');
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const localesDir = path.join(__dirname, '..', 'locales');
 const supportedLangs = ['en', 'zh-CN', 'zh-TW', 'ja', 'ko', 'fr', 'de', 'es', 'es-419', 'it', 'pt-BR', 'ru'];
 
@@ -65,8 +67,6 @@ console.log('✅ 12-Locale Key Parity tests PASSED.');
 
 // 4. Test AppStore Reactive Proxy & Subscriptions
 console.log('▶ Testing AppStore reactive state & subscriber notifications...');
-import { AppStore } from '../src/managers/AppStore.js';
-
 const store = new AppStore();
 assert.strictEqual(store.state.isDragging, false, 'Default isDragging should be false');
 assert.strictEqual(store.state.isSettingsOpen, false, 'Default isSettingsOpen should be false');
@@ -89,4 +89,61 @@ assert.strictEqual(store.state.cameraPitch, 0.5, 'Batch set should update camera
 assert.strictEqual(store.state.cameraYaw, 1.2, 'Batch set should update cameraYaw');
 console.log('✅ AppStore reactive tests PASSED.');
 
-console.log('\n🎉 ALL 4 UNIT TEST SUITES PASSED CLEANLY (100% SUCCESS)');
+// 5. Test GPUAssetManager Recursive Disposal
+console.log('▶ Testing GPUAssetManager recursive VRAM & texture disposal...');
+let geomDisposed = false;
+let matDisposed = false;
+let texDisposed = false;
+
+const mockTexture = {
+  isTexture: true,
+  dispose: () => { texDisposed = true; }
+};
+
+const mockMaterial = {
+  map: mockTexture,
+  dispose: () => { matDisposed = true; }
+};
+
+const mockGeometry = {
+  dispose: () => { geomDisposed = true; }
+};
+
+const mockHierarchy = {
+  children: [],
+  traverse: (cb) => {
+    cb({
+      geometry: mockGeometry,
+      material: mockMaterial
+    });
+  },
+  remove: () => {}
+};
+
+disposeHierarchy(mockHierarchy);
+assert.strictEqual(geomDisposed, true, 'Geometry must be disposed');
+assert.strictEqual(matDisposed, true, 'Material must be disposed');
+assert.strictEqual(texDisposed, true, 'Attached texture must be disposed');
+console.log('✅ GPUAssetManager tests PASSED.');
+
+// 6. Test Electron Security Bridge & Preload Configuration
+console.log('▶ Testing Preload Script & Security Isolation configuration...');
+const preloadPath = path.join(__dirname, '..', 'preload.js');
+assert.strictEqual(fs.existsSync(preloadPath), true, 'preload.js must exist in app root');
+const preloadContent = fs.readFileSync(preloadPath, 'utf8');
+assert.strictEqual(preloadContent.includes('contextBridge.exposeInMainWorld'), true, 'preload.js must use contextBridge');
+assert.strictEqual(preloadContent.includes('electronAPI'), true, 'preload.js must expose electronAPI');
+assert.strictEqual(preloadContent.includes('fsBridge'), true, 'preload.js must expose fsBridge');
+assert.strictEqual(preloadContent.includes('pathBridge'), true, 'preload.js must expose pathBridge');
+assert.strictEqual(preloadContent.includes('urlBridge'), true, 'preload.js must expose urlBridge');
+
+const mainPath = path.join(__dirname, '..', 'main.js');
+const mainContent = fs.readFileSync(mainPath, 'utf8');
+assert.strictEqual(mainContent.includes('contextIsolation: true'), true, 'main.js must enable contextIsolation: true');
+assert.strictEqual(mainContent.includes('nodeIntegration: false'), true, 'main.js must set nodeIntegration: false');
+assert.strictEqual(mainContent.includes("preload: path.join(__dirname, 'preload.js')"), true, 'main.js must load preload.js');
+assert.strictEqual(mainContent.includes('startSteamRepaintLoop()'), true, 'main.js must dynamically start Steam repaint loop');
+assert.strictEqual(mainContent.includes('stopSteamRepaintLoop()'), true, 'main.js must dynamically stop Steam repaint loop');
+console.log('✅ Electron Security Bridge & Idle Optimization tests PASSED.');
+
+console.log('\n🎉 ALL 6 UNIT TEST SUITES PASSED CLEANLY (100% SUCCESS)');

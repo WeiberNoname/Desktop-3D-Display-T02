@@ -22,6 +22,29 @@ let isSteamOverlayActive = false;
 let edgeCheckInterval = null;
 const steamService = new SteamService();
 
+function startSteamRepaintLoop() {
+  if (mainWindow && !mainWindow.isDestroyed() && !mainWindow.steamworksRepaintInterval) {
+    mainWindow.steamworksRepaintInterval = setInterval(() => {
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        if (!mainWindow.webContents.isPainting()) {
+          mainWindow.webContents.invalidate();
+        }
+      } else {
+        stopSteamRepaintLoop();
+      }
+    }, 1000 / 60);
+    Logger.logDiagnostic('[Steam] Active overlay repaint loop started (60 FPS).');
+  }
+}
+
+function stopSteamRepaintLoop() {
+  if (mainWindow && mainWindow.steamworksRepaintInterval) {
+    clearInterval(mainWindow.steamworksRepaintInterval);
+    mainWindow.steamworksRepaintInterval = null;
+    Logger.logDiagnostic('[Steam] Overlay inactive: Repaint loop deactivated to save idle CPU/GPU.');
+  }
+}
+
 steamService.initialize((active) => {
   isSteamOverlayActive = active;
   if (mainWindow && !mainWindow.isDestroyed()) {
@@ -30,12 +53,14 @@ steamService.initialize((active) => {
         clearInterval(edgeCheckInterval);
         edgeCheckInterval = null;
       }
+      startSteamRepaintLoop();
       mainWindow.setAlwaysOnTop(false);
       mainWindow.setIgnoreMouseEvents(false);
       mainWindow.focus();
       mainWindow.setFullScreen(true);
       mainWindow.webContents.send('steam-overlay-active', true);
     } else {
+      stopSteamRepaintLoop();
       mainWindow.setFullScreen(false);
       mainWindow.setAlwaysOnTop(true, 'screen-saver', 1);
       mainWindow.setIgnoreMouseEvents(true, { forward: true });
@@ -66,8 +91,10 @@ function createWindow() {
     resizable: false,
     hasShadow: false,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false
+      nodeIntegration: false,
+      contextIsolation: true,
+      sandbox: false,
+      preload: path.join(__dirname, 'preload.js')
     }
   });
 
@@ -97,21 +124,8 @@ function createWindow() {
     logDiagnostic('Developer mode: Detached DevTools window opened.');
   }
 
-  // Repaint invalidator for Steam overlay rendering correctness
-  mainWindow.steamworksRepaintInterval = setInterval(() => {
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      if (!mainWindow.webContents.isPainting()) {
-        mainWindow.webContents.invalidate();
-      }
-    } else {
-      clearInterval(mainWindow.steamworksRepaintInterval);
-    }
-  }, 1000 / 60);
-
   mainWindow.on('closed', function () {
-    if (mainWindow && mainWindow.steamworksRepaintInterval) {
-      clearInterval(mainWindow.steamworksRepaintInterval);
-    }
+    stopSteamRepaintLoop();
     if (edgeCheckInterval) {
       clearInterval(edgeCheckInterval);
       edgeCheckInterval = null;

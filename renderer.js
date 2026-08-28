@@ -57,10 +57,11 @@ import { buildSaveSettingsCallback } from './src/ui/FormDOMGatherer.js';
 import { AppStore } from './src/managers/AppStore.js';
 import { buildSaveSettingsConfig } from './src/ui/SettingsUIConfigBuilder.js';
 
-const { ipcRenderer } = window.require('electron');
-const fs = window.require('fs');
-const path = window.require('path');
-const { pathToFileURL } = window.require('url');
+// Secure Preload API Bridges (contextIsolation: true compliant)
+const ipcRenderer = window.electronAPI || (typeof window.require === 'function' ? window.require('electron').ipcRenderer : {});
+const fs = window.fsBridge || (typeof window.require === 'function' ? window.require('fs') : {});
+const path = window.pathBridge || (typeof window.require === 'function' ? window.require('path') : {});
+const { pathToFileURL } = window.urlBridge || (typeof window.require === 'function' ? window.require('url') : { pathToFileURL: (p) => ({ href: p }) });
 
 // Three.js Scene, Camera, Renderer, and Lighting Objects
 let scene, camera, renderer, characterGroup, innerModelGroup, collisionProxy;
@@ -169,7 +170,7 @@ function createMascot() {
   }, 150);
 }
 
-let updateIgnoreMouseState = () => {};
+let updateIgnoreMouseState = () => { };
 
 const interactionDelegates = createInteractionDelegates({
   setupInteractionUtil,
