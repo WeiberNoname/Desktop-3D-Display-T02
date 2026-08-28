@@ -67,6 +67,7 @@ export async function initializeApp(deps) {
   renderer.setSize(initialWidth, initialHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setClearColor(0x000000, 0);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   if (container) container.appendChild(renderer.domElement);

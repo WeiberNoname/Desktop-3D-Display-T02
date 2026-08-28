@@ -182,6 +182,21 @@ export function loadCustomModel(ctx, filePath) {
 
       model.position.set(-center.x, -center.y, -center.z);
 
+      // Ensure all textures and materials from GLTF/GLB are active and receive proper lighting
+      model.traverse((child) => {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+          if (child.material) {
+            child.material.side = THREE.DoubleSide;
+            child.material.needsUpdate = true;
+            if (child.material.map) {
+              child.material.map.needsUpdate = true;
+            }
+          }
+        }
+      });
+
       const padding = 1.35;
       const innerGroup = new THREE.Group();
       innerGroup.add(model);
