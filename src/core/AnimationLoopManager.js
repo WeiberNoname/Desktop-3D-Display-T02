@@ -27,6 +27,7 @@ export function updateAnimationFrame(deps) {
     renderer,
     scene,
     sakuraRainManager,
+    snowFallManager,
     renderPreviewViewport,
     updateFPSCamera
   } = deps;
@@ -36,10 +37,14 @@ export function updateAnimationFrame(deps) {
     mixer.update(delta);
   }
 
-  // 1.5 Update 3D Sakura Petal Rain animation
+  // 1.5 Update 3D Atmosphere Effects (Sakura Petals & Snow Fall)
   if (sakuraRainManager) {
     sakuraRainManager.setEnabled(currentSettings.sakuraRain !== false);
     sakuraRainManager.update(delta, elapsed);
+  }
+  if (snowFallManager) {
+    snowFallManager.setEnabled(currentSettings.snowFall === true);
+    snowFallManager.update(delta, elapsed);
   }
 
   // 2. Handle continuous axis spinning if enabled

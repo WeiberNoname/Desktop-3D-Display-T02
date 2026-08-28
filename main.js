@@ -37,7 +37,7 @@ steamService.initialize((active) => {
       mainWindow.webContents.send('steam-overlay-active', true);
     } else {
       mainWindow.setFullScreen(false);
-      mainWindow.setAlwaysOnTop(true);
+      mainWindow.setAlwaysOnTop(true, 'screen-saver', 1);
       mainWindow.setIgnoreMouseEvents(true, { forward: true });
       mainWindow.webContents.send('steam-overlay-active', false);
     }
@@ -71,11 +71,21 @@ function createWindow() {
     }
   });
 
+  // Elevate to screen-saver z-order level so window stays on top of Snipping Tool and system overlays
+  mainWindow.setAlwaysOnTop(true, 'screen-saver', 1);
+  mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+
   mainWindow.loadFile('index.html');
 
   // Start with click-through enabled (ignoring clicks) for transparent parts (unless in dev mode).
   // forward: true ensures mouse movements are still tracked inside the window.
   mainWindow.setIgnoreMouseEvents(!isDevMode, { forward: true });
+
+  mainWindow.on('blur', () => {
+    if (!isSteamOverlayActive && mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.setAlwaysOnTop(true, 'screen-saver', 1);
+    }
+  });
 
   mainWindow.webContents.on('console-message', (e, level, message, line, sourceId) => {
     Logger.logDiagnostic(`[Renderer Console] ${message}`);

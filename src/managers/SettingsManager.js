@@ -20,6 +20,7 @@ export class SettingsManager {
       lockPosition: false,
       viewOnly: false,
       sakuraRain: true,
+      snowFall: false,
       enablePhysics: false,
       physicsGravity: 9.8,
       physicsElasticity: 0.7,
@@ -138,6 +139,7 @@ language=en`;
             if (key === 'lockPosition') { currentSettings.lockPosition = (val === 'true'); validKeysParsed++; }
             if (key === 'viewOnly') { currentSettings.viewOnly = (val === 'true'); validKeysParsed++; }
             if (key === 'sakuraRain') { currentSettings.sakuraRain = (val !== 'false'); validKeysParsed++; }
+            if (key === 'snowFall') { currentSettings.snowFall = (val === 'true'); validKeysParsed++; }
             if (key === 'enablePhysics') { currentSettings.enablePhysics = (val === 'true'); validKeysParsed++; }
             if (key === 'physicsGravity') { currentSettings.physicsGravity = parseFloat(val) || 9.8; validKeysParsed++; }
             if (key === 'physicsElasticity') { currentSettings.physicsElasticity = parseFloat(val) || 0.7; validKeysParsed++; }
@@ -225,6 +227,7 @@ settingsLeft=${currentSettings.settingsLeft}
 lockPosition=${currentSettings.lockPosition}
 viewOnly=${currentSettings.viewOnly}
 sakuraRain=${currentSettings.sakuraRain !== false}
+snowFall=${currentSettings.snowFall === true}
 enablePhysics=${currentSettings.enablePhysics}
 physicsGravity=${currentSettings.physicsGravity}
 physicsElasticity=${currentSettings.physicsElasticity}

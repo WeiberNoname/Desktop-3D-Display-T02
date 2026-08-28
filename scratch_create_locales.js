@@ -1447,7 +1447,7 @@ const newTranslations = {
   }
 };
 
-// 12-Language Atmosphere & Sakura Rain Translations
+// 12-Language Atmosphere & Sakura Rain & Snow Fall Translations
 const sakuraTranslations = {
   "en": {
     "tab_atmosphere": "🌸 Atmosphere",
@@ -1455,7 +1455,11 @@ const sakuraTranslations = {
     "sakura_rain": "🌸 Sakura Petal Rain",
     "sakura_rain_sub": "(Gently falling cherry blossoms)",
     "sakura_hint_title": "Sakura Atmosphere",
-    "sakura_hint_body": "Natural 3D tumbling petals with wind fluttering physics and dynamic lighting."
+    "sakura_hint_body": "Natural 3D tumbling petals with wind fluttering physics and dynamic lighting.",
+    "snow_fall": "❄️ Gentle Snow Fall",
+    "snow_fall_sub": "(Glistening soft snowflakes)",
+    "snow_hint_title": "Winter Snow Atmosphere",
+    "snow_hint_body": "Soft glistening 3D crystalline snowflakes with gentle breeze drift and illumination."
   },
   "zh-CN": {
     "tab_atmosphere": "🌸 氛围特效",
@@ -1463,7 +1467,11 @@ const sakuraTranslations = {
     "sakura_rain": "🌸 樱花飘落特效",
     "sakura_rain_sub": "(在吉祥物周围飘落唯美粉色樱花瓣)",
     "sakura_hint_title": "樱花氛围",
-    "sakura_hint_body": "具有自然翻转、随风飘动物理与动态光影的 3D 樱花瓣。"
+    "sakura_hint_body": "具有自然翻转、随风飘动物理与动态光影的 3D 樱花瓣。",
+    "snow_fall": "❄️ 唯美飘雪特效",
+    "snow_fall_sub": "(晶莹闪耀的柔和立体雪花漫天飞舞)",
+    "snow_hint_title": "冬日飘雪氛围",
+    "snow_hint_body": "晶莹剔透的 3D 结晶雪花，伴随微风自然飘荡与环境漫反射。"
   },
   "zh-TW": {
     "tab_atmosphere": "🌸 氛圍特效",
@@ -1471,7 +1479,11 @@ const sakuraTranslations = {
     "sakura_rain": "🌸 櫻花飄落特效",
     "sakura_rain_sub": "(在吉祥物周圍飄落唯美粉色櫻花瓣)",
     "sakura_hint_title": "櫻花氛圍",
-    "sakura_hint_body": "具有自然翻轉、隨風飄動物理與動態光影的 3D 櫻花瓣。"
+    "sakura_hint_body": "具有自然翻轉、隨風飄動物理與動態光影的 3D 櫻花瓣。",
+    "snow_fall": "❄️ 唯美飄雪特效",
+    "snow_fall_sub": "(晶瑩閃耀的柔和立體雪花漫天飛舞)",
+    "snow_hint_title": "冬日飄雪氛圍",
+    "snow_hint_body": "晶瑩剔透的 3D 結晶雪花，伴隨微風自然飄盪與環境漫反射。"
   },
   "ja": {
     "tab_atmosphere": "🌸 演出効果",
@@ -1479,7 +1491,11 @@ const sakuraTranslations = {
     "sakura_rain": "🌸 桜の花びらエフェクト",
     "sakura_rain_sub": "(キャラクターの周りに舞い散る桜の花びら)",
     "sakura_hint_title": "桜の演出",
-    "sakura_hint_body": "風になびく物理演算と動的なライティングを備えた立体的な桜の花びら。"
+    "sakura_hint_body": "風になびく物理演算と動的なライティングを備えた立体的な桜の花びら。",
+    "snow_fall": "❄️ 雪の結晶エフェクト",
+    "snow_fall_sub": "(きらめく雪の結晶が優しく舞い降る)",
+    "snow_hint_title": "冬の降雪演出",
+    "snow_hint_body": "柔らかな光を反射しながら風に漂う3Dの雪の結晶パーティクル。"
   },
   "ko": {
     "tab_atmosphere": "🌸 분위기 효과",
@@ -1487,7 +1503,11 @@ const sakuraTranslations = {
     "sakura_rain": "🌸 벚꽃 비 효과",
     "sakura_rain_sub": "(캐릭터 주변에 흩날리는 벚꽃 잎)",
     "sakura_hint_title": "벚꽃 분위기",
-    "sakura_hint_body": "바람에 흩날리는 물리 엔진과 동적 조명이 적용된 3D 벚꽃 잎."
+    "sakura_hint_body": "바람에 흩날리는 물리 엔진과 동적 조명이 적용된 3D 벚꽃 잎.",
+    "snow_fall": "❄️ 눈 내리는 효과",
+    "snow_fall_sub": "(부드럽게 반짝이며 흩날리는 눈꽃)",
+    "snow_hint_title": "겨울 눈꽃 분위기",
+    "snow_hint_body": "바람을 타고 자연스럽게 흩날리는 3D 눈꽃 결정 파티클."
   },
   "fr": {
     "tab_atmosphere": "🌸 Ambiance",
@@ -1495,7 +1515,11 @@ const sakuraTranslations = {
     "sakura_rain": "🌸 Pluie de pétales de Sakura",
     "sakura_rain_sub": "(Pétales de cerisier flottant doucement)",
     "sakura_hint_title": "Atmosphère Sakura",
-    "sakura_hint_body": "Pétales 3D avec physique de flottement au vent et éclairage dynamique."
+    "sakura_hint_body": "Pétales 3D avec physique de flottement au vent et éclairage dynamique.",
+    "snow_fall": "❄️ Chute de neige délicate",
+    "snow_fall_sub": "(Flocons de neige scintillants)",
+    "snow_hint_title": "Ambiance Hivernale",
+    "snow_hint_body": "Flocons 3D cristallins flottant doucement dans la brise avec reflets lumineux."
   },
   "de": {
     "tab_atmosphere": "🌸 Atmosphäre",
@@ -1503,7 +1527,11 @@ const sakuraTranslations = {
     "sakura_rain": "🌸 Sakura-Blütenregen",
     "sakura_rain_sub": "(Sanft fallende Kirschblütenblätter)",
     "sakura_hint_title": "Sakura-Atmosphäre",
-    "sakura_hint_body": "Natürlich wirbelnde 3D-Blütenblätter mit Windphysik und dynamischer Beleuchtung."
+    "sakura_hint_body": "Natürlich wirbelnde 3D-Blütenblätter mit Windphysik und dynamischer Beleuchtung.",
+    "snow_fall": "❄️ Sanfter Schneefall",
+    "snow_fall_sub": "(Glitzernde sanfte Schneeflocken)",
+    "snow_hint_title": "Winterschnee-Atmosphäre",
+    "snow_hint_body": "Glitzernde 3D-Schneekristalle mit sanfter Brisen-Drift und Umgebungsbeleuchtung."
   },
   "es": {
     "tab_atmosphere": "🌸 Atmósfera",
@@ -1511,7 +1539,11 @@ const sakuraTranslations = {
     "sakura_rain": "🌸 Lluvia de pétalos Sakura",
     "sakura_rain_sub": "(Pétalos de flor de cerezo cayendo suavemente)",
     "sakura_hint_title": "Atmósfera Sakura",
-    "sakura_hint_body": "Pétalos 3D con física de aleteo por el viento e iluminación dinámica."
+    "sakura_hint_body": "Pétalos 3D con física de aleteo por el viento e iluminación dinámica.",
+    "snow_fall": "❄️ Suave nevada",
+    "snow_fall_sub": "(Copos de nieve brillantes cayendo)",
+    "snow_hint_title": "Atmósfera Invernal",
+    "snow_hint_body": "Copos de nieve cristalinos 3D con suave deriva por el viento e iluminación."
   },
   "es-419": {
     "tab_atmosphere": "🌸 Atmósfera",
@@ -1519,15 +1551,23 @@ const sakuraTranslations = {
     "sakura_rain": "🌸 Lluvia de pétalos Sakura",
     "sakura_rain_sub": "(Pétalos de flor de cerezo cayendo suavemente)",
     "sakura_hint_title": "Atmósfera Sakura",
-    "sakura_hint_body": "Pétalos 3D con física de aleteo por el viento e iluminación dinámica."
+    "sakura_hint_body": "Pétalos 3D con física de aleteo por el viento e iluminación dinámica.",
+    "snow_fall": "❄️ Suave nevada",
+    "snow_fall_sub": "(Copos de nieve brillantes cayendo)",
+    "snow_hint_title": "Atmósfera Invernal",
+    "snow_hint_body": "Copos de nieve cristalinos 3D con suave deriva por el viento e iluminación."
   },
   "it": {
     "tab_atmosphere": "🌸 Atmosfera",
-    "atmosphere_fx_title": "🌸 Effetti Visivi e Atmosfera Ambientale",
+    "atmosphere_fx_title": "🌸 Effetti Visivi e Atmósfera Ambientale",
     "sakura_rain": "🌸 Pioggia di petali di Sakura",
     "sakura_rain_sub": "(Petali di ciliegio che cadono dolcemente)",
     "sakura_hint_title": "Atmosfera Sakura",
-    "sakura_hint_body": "Petali 3D con fisica di fluttuazione al vento e illuminazione dinamica."
+    "sakura_hint_body": "Petali 3D con fisica di fluttuazione al vento e illuminazione dinamica.",
+    "snow_fall": "❄️ Dolce nevicata",
+    "snow_fall_sub": "(Fiocchi di neve scintillanti)",
+    "snow_hint_title": "Atmosfera Invernale",
+    "snow_hint_body": "Fiocchi 3D cristallini con leggera deriva nella brezza e riflessi luminosi."
   },
   "pt-BR": {
     "tab_atmosphere": "🌸 Atmosfera",
@@ -1535,7 +1575,11 @@ const sakuraTranslations = {
     "sakura_rain": "🌸 Chuva de pétalas de Sakura",
     "sakura_rain_sub": "(Pétalas de cerejeira caindo suavemente)",
     "sakura_hint_title": "Atmosfera Sakura",
-    "sakura_hint_body": "Pétalas 3D com física de flutuação ao vento e iluminação dinâmica."
+    "sakura_hint_body": "Pétalas 3D com física de flutuação ao vento e iluminação dinâmica.",
+    "snow_fall": "❄️ Suave queda de neve",
+    "snow_fall_sub": "(Flocos de neve brilhantes)",
+    "snow_hint_title": "Atmosfera de Inverno",
+    "snow_hint_body": "Flocos de neve 3D cristalinos com suave flutuação ao vento e iluminação."
   },
   "ru": {
     "tab_atmosphere": "🌸 Атмосфера",
@@ -1543,7 +1587,11 @@ const sakuraTranslations = {
     "sakura_rain": "🌸 Дождь из лепестков сакуры",
     "sakura_rain_sub": "(Нежно падающие лепестки цветущей сакуры)",
     "sakura_hint_title": "Атмосфера сакуры",
-    "sakura_hint_body": "Лепестки 3D с физикой колыхания на ветру и динамическим освещением."
+    "sakura_hint_body": "Лепестки 3D с физикой колыхания на ветру и динамическим освещением.",
+    "snow_fall": "❄️ Нежный снегопад",
+    "snow_fall_sub": "(Мягкие мерцающие снежинки)",
+    "snow_hint_title": "Зимняя снежная атмосфера",
+    "snow_hint_body": "Мягкие кристальные 3D снежинки с естественным движением на ветру и подсветкой."
   }
 };
 
@@ -1560,7 +1608,6 @@ supportedCodes.forEach(code => {
     fs.mkdirSync(dir, { recursive: true });
   }
   const filePath = path.join(dir, 'translation.json');
-  // Fallback merge guarantees that if a key is missing in a specific language, it safely uses master English
   const merged = Object.assign({}, masterEN, newTranslations[code] || {}, sakuraTranslations[code] || {});
   if (!merged.btn_save && merged.save_btn) merged.btn_save = merged.save_btn;
   if (!merged.save_btn && merged.btn_save) merged.save_btn = merged.btn_save;

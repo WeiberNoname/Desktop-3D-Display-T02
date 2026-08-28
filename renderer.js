@@ -7,6 +7,7 @@ import { updateGearPosition as updateGearPositionUtil, showSpeechBubble } from '
 import { updateSpotlightPosition as updateSpotlightPositionUtil, updateStageLighting as updateStageLightingUtil } from './src/core/LightingManager.js';
 import { createProceduralMascot } from './src/core/MascotBuilder.js';
 import { SakuraRainManager } from './src/core/SakuraRainManager.js';
+import { SnowFallManager } from './src/core/SnowFallManager.js';
 import { setupInteraction as setupInteractionUtil } from './src/core/InteractionManager.js';
 import {
   scanForModels as scanForModelsUtil,
@@ -78,6 +79,7 @@ let loadedAnimations = [];
 let availableAnimations = [];
 let customModelLoaded = false;
 let sakuraRainManager = null;
+let snowFallManager = null;
 
 // Application Reactive State Store
 const appStore = new AppStore();
@@ -130,6 +132,12 @@ async function init() {
         if (!sakuraRainManager && scene) {
           sakuraRainManager = new SakuraRainManager(THREE, scene);
           sakuraRainManager.setEnabled(currentSettings.sakuraRain !== false);
+        }
+      },
+      initSnowFall: () => {
+        if (!snowFallManager && scene) {
+          snowFallManager = new SnowFallManager(THREE, scene);
+          snowFallManager.setEnabled(currentSettings.snowFall === true);
         }
       },
       animate,
@@ -501,6 +509,7 @@ const renderLoopDelegates = createRenderLoopDelegates({
     renderer,
     scene,
     sakuraRainManager,
+    snowFallManager,
     renderPreviewViewport,
     updateFPSCamera,
     isSettingsOpen: appState.isSettingsOpen,

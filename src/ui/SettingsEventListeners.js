@@ -251,6 +251,14 @@ export function setupSettingsUI(deps) {
     });
   }
 
+  const snowFallCheck = document.getElementById('snow-fall');
+  if (snowFallCheck) {
+    snowFallCheck.addEventListener('change', () => {
+      currentSettings.snowFall = snowFallCheck.checked;
+      if (saveSettingsFile) saveSettingsFile();
+    });
+  }
+
   const activatePreset = (intensity, spotlights, bubbleText, duration) => {
     currentSettings.enableStudioLights = true;
     currentSettings.ambientIntensity = intensity;
