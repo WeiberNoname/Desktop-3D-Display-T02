@@ -4,6 +4,8 @@
  * auto-grounding height calculations, AnimationMixer clip setup, and safe fallbacks.
  */
 
+import { createFlagMesh } from './FlagMeshBuilder.js';
+
 let loadToken = 0;
 
 /**
@@ -47,6 +49,16 @@ export function scanForModels(fs, getAssetsPath) {
 export function detectAndLoadAsset(ctx) {
   const { fs, path, getAssetsPath, currentSettings, state, callbacks } = ctx;
   state.discoveredModels = scanForModels(fs, getAssetsPath);
+
+  if (currentSettings.activeModel === 'flag') {
+    console.log('Active mascot is Waving Country Flag.');
+    if (callbacks.createFlag) {
+      callbacks.createFlag();
+    } else {
+      loadFlagModel(ctx);
+    }
+    return;
+  }
 
   if (currentSettings.activeModel === 'procedural') {
     console.log('Active mascot is procedural bunny.');
@@ -116,6 +128,69 @@ export function fallbackToProcedural(ctx) {
 
   if (callbacks && callbacks.createMascot) callbacks.createMascot();
   if (callbacks && callbacks.populateAnimationDropdown) callbacks.populateAnimationDropdown();
+}
+
+/**
+ * Loads the native 3D Waving Country Flag mesh cleanly.
+ * @param {Object} ctx - Context dependencies.
+ */
+export function loadFlagModel(ctx) {
+  loadToken++; // Invalidate pending custom model loads
+  console.log('Loading Waving 3D Country Flag mesh.');
+  const { THREE, scene, camera, renderer, state, currentSettings, callbacks } = ctx;
+
+  state.customModelLoaded = false;
+  currentSettings.activeModel = 'flag';
+
+  if (state.mixer) {
+    state.mixer.stopAllAction();
+    state.mixer = null;
+  }
+  state.idleAction = null;
+  state.reactAction = null;
+  state.loadedAnimations = [];
+  state.availableAnimations = [];
+
+  const existingGroup = state.getCharacterGroup ? state.getCharacterGroup() : null;
+  if (existingGroup && scene) {
+    scene.remove(existingGroup);
+  }
+
+  const targetW = currentSettings.width || 350;
+  const targetH = currentSettings.height || 350;
+  if (camera) {
+    camera.aspect = targetW / targetH;
+    camera.updateProjectionMatrix();
+    camera.position.set(0, 0, 5.5);
+    camera.lookAt(0, 0, 0);
+  }
+  if (renderer) {
+    renderer.setSize(targetW, targetH);
+  }
+
+  const result = createFlagMesh(THREE, scene, {
+    customTextureUrl: currentSettings.customTexturePath,
+    flagPreset: currentSettings.flagPreset,
+    windSpeed: currentSettings.flagWindSpeed,
+    waveIntensity: currentSettings.flagWaveIntensity,
+    textureRepeatX: currentSettings.textureRepeatX,
+    textureRepeatY: currentSettings.textureRepeatY,
+    textureRoughness: currentSettings.textureRoughness,
+    textureMetalness: currentSettings.textureMetalness
+  });
+
+  if (result) {
+    if (state.setCharacterGroup) state.setCharacterGroup(result.characterGroup);
+    if (state.setInnerModelGroup) state.setInnerModelGroup(result.innerModelGroup);
+    if (state.setCollisionProxy) state.setCollisionProxy(result.collisionProxy);
+  }
+
+  if (callbacks && callbacks.generateModelPreview) {
+    callbacks.generateModelPreview('flag');
+  }
+  if (callbacks && callbacks.populateAnimationDropdown) {
+    callbacks.populateAnimationDropdown();
+  }
 }
 
 /**

@@ -4,6 +4,8 @@
  * lighting creation, spatial helpers, window resizing, and main process IPC listeners.
  */
 
+import { soundManager } from './SoundManager.js';
+
 export async function initializeApp(deps) {
   const {
     THREE,
@@ -125,6 +127,12 @@ export async function initializeApp(deps) {
   // Initialize 3D Preview Viewport Engine
   if (callbacks.initPreviewViewport) callbacks.initPreviewViewport();
   if (callbacks.startBackgroundPreviewGenerator) callbacks.startBackgroundPreviewGenerator();
+
+  // Initialize Sound Engine & Sync Active Atmosphere
+  soundManager.syncAtmosphere(currentSettings);
+  ['click', 'pointerdown', 'mousedown', 'keydown', 'touchstart'].forEach(evt => {
+    window.addEventListener(evt, () => soundManager.resumeAudioContext(), { passive: true });
+  });
 
   // Start Animation Loop
   if (callbacks.animate) callbacks.animate();

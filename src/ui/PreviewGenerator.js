@@ -6,6 +6,7 @@
  */
 
 import { createProceduralMascot } from '../core/MascotBuilder.js';
+import { createFlagMesh } from '../core/FlagMeshBuilder.js';
 
 export const DEFAULT_FALLBACK_ICON = "data:image/svg+xml;utf8," + encodeURIComponent(`
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
@@ -83,7 +84,7 @@ export function populateModelDropdown(ctx) {
   gridContainer.innerHTML = '';
 
   const discovered = state && state.discoveredModels ? state.discoveredModels : [];
-  const options = ['procedural', ...discovered];
+  const options = ['procedural', 'flag', ...discovered];
   const assetsDir = getAssetsPath();
 
   options.forEach(modelKey => {
@@ -106,9 +107,13 @@ export function populateModelDropdown(ctx) {
 
     const label = document.createElement('div');
     label.className = 'mascot-card-label';
-    const isProcedural = modelKey === 'procedural';
-    const defaultLabel = (typeof t === 'function') ? t('default_mascot') : 'Default';
-    label.textContent = isProcedural ? defaultLabel : modelKey.replace(/\.(glb|gltf)$/i, '');
+    if (modelKey === 'procedural') {
+      label.textContent = (typeof t === 'function') ? t('default_mascot', 'Default Bunny 🐰') : 'Default Bunny 🐰';
+    } else if (modelKey === 'flag') {
+      label.textContent = (typeof t === 'function') ? t('model_flag', 'Country Flag 🎌') : 'Country Flag 🎌';
+    } else {
+      label.textContent = modelKey.replace(/\.(glb|gltf)$/i, '');
+    }
 
     card.appendChild(img);
     card.appendChild(label);
@@ -218,6 +223,34 @@ export function generateMascotPreviewInBackground(ctx, modelKey) {
       }
     } catch (e) {
       console.warn("Failed background capture for procedural mascot:", e);
+    }
+  } else if (modelKey === 'flag') {
+    const previewScene = new THREE.Scene();
+    const previewCamera = new THREE.PerspectiveCamera(45, 1.0, 0.1, 100);
+    previewCamera.position.set(0, 0.2, 5.2);
+    previewCamera.lookAt(0, 0.2, 0);
+
+    const ambLight = new THREE.AmbientLight(0xffffff, 0.9);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.3);
+    dirLight.position.set(3, 4, 5);
+    previewScene.add(ambLight);
+    previewScene.add(dirLight);
+
+    createFlagMesh(THREE, previewScene, ctx.currentSettings || {});
+
+    try {
+      renderer.render(previewScene, previewCamera);
+      const dataUrl = renderer.domElement.toDataURL("image/png");
+      const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
+      fs.writeFileSync(previewPath, base64Data, 'base64');
+      console.log(`Generated canonical preview for: flag`);
+
+      const imgEl = document.querySelector(`.mascot-thumbnail[data-mascot="flag"]`);
+      if (imgEl) {
+        imgEl.src = pathToFileURL(previewPath).href + "?t=" + Date.now();
+      }
+    } catch (e) {
+      console.warn("Failed background capture for flag mesh:", e);
     }
   } else {
     const filePath = path.join(assetsDir, modelKey);

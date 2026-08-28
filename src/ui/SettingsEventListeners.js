@@ -6,6 +6,7 @@
 
 import { setupDiagnosticsUI } from './SettingsDiagnosticsUI.js';
 import { setupSettingsPanelResize } from './SettingsPanelResizeHandler.js';
+import { soundManager } from '../core/SoundManager.js';
 
 export function setupSettingsUI(deps) {
   const {
@@ -179,6 +180,8 @@ export function setupSettingsUI(deps) {
 
         if (newModel === 'procedural') {
           if (deps.fallbackToProcedural) deps.fallbackToProcedural();
+        } else if (newModel === 'flag') {
+          if (deps.loadFlagModel) deps.loadFlagModel();
         } else if (deps.getAssetsPath && deps.loadCustomModel && deps.path) {
           const fullPath = deps.path.join(deps.getAssetsPath(), newModel);
           deps.loadCustomModel(fullPath);
@@ -247,6 +250,7 @@ export function setupSettingsUI(deps) {
   if (sakuraRainCheck) {
     sakuraRainCheck.addEventListener('change', () => {
       currentSettings.sakuraRain = sakuraRainCheck.checked;
+      soundManager.syncAtmosphere(currentSettings);
       if (saveSettingsFile) saveSettingsFile();
     });
   }
@@ -255,6 +259,7 @@ export function setupSettingsUI(deps) {
   if (snowFallCheck) {
     snowFallCheck.addEventListener('change', () => {
       currentSettings.snowFall = snowFallCheck.checked;
+      soundManager.syncAtmosphere(currentSettings);
       if (saveSettingsFile) saveSettingsFile();
     });
   }
@@ -302,6 +307,7 @@ export function setupSettingsUI(deps) {
     state.isSettingsOpen = false;
     if (panel) panel.classList.add('hidden');
     if (updateSpotlightPosition) updateSpotlightPosition();
+    soundManager.syncAtmosphere(currentSettings);
     ipcRenderer.send('set-ignore-mouse', true);
   };
 

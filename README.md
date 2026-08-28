@@ -50,7 +50,7 @@ node scratch_create_locales.js
 ```
 This script performs a 100% key parity build across all 12 core language codes:
 - Creates `locales/<lang>/translation.json` for all 12 core languages.
-- Ensures all **121 UI keys** exist in every language dictionary with fallback protection to guarantee no missing text errors.
+- Ensures all **164 UI keys** exist in every language dictionary with fallback protection to guarantee no missing text errors.
 
 ### 3. Supported Languages Scope (12 Core Locales)
 | Language Code | Language Name |
@@ -71,7 +71,7 @@ This script performs a 100% key parity build across all 12 core language codes:
 ### 4. Adding or Updating Custom Translations
 If you add new UI elements or want to edit existing translations:
 1. Open `scratch_create_locales.js`.
-2. Add or modify translation keys inside `sakuraTranslations` or `newTranslations`.
+2. Add or modify translation keys inside `textureTranslations`, `soundTranslations`, `sakuraTranslations`, or `newTranslations`.
 3. Run `node scratch_create_locales.js` to propagate the changes to all 12 `translation.json` files.
 4. Rebuild the app binary with `npm run build`.
 
@@ -79,11 +79,24 @@ If you add new UI elements or want to edit existing translations:
 
 ## ⚡ Key Real-Time Capabilities & Studio Suite
 
-### 1. 🌸 Atmosphere & Visual FX (Atmosphere Tab)
-- **3D Sakura Petal Rain Simulation Engine**: Real-time particle system featuring curved petal geometry, natural tumbling aerodynamics, sinusoidal breeze drift, and viewport boundary wrapping.
+### 1. 🎨 Custom Texture Studio & 3D Waving Country Flag (Texture Tab)
+- **Image Texture Ingestion**: Upload custom PNG, JPG, WebP, or SVG images via drag-and-drop or file picker to map directly onto native 3D meshes in real-time.
+- **Native 3D Waving Country Flag Mesh**: Polished brass flagpole, weighted obsidian base, decorative finial, and a subdivided double-sided cloth plane mesh.
+- **Real-Time Cloth Wave Physics Simulation**: Harmonic traveling sine ripples, longitudinal chord contraction, and corner flutter with dynamic normal recalculations.
+- **Preset Flag Styles**: 5 procedural canvas flag styles (🦁 *Royal Tricolor*, 🌐 *World Globe*, ⚡ *Cyber Neon*, ⭐ *Royal Star*, 🌈 *Pride Rainbow*).
+- **Surface Shaders & Wind Tuning**: Sliders for wind speed ($0.5\times$–$10.0\times$), wave amplitude ($0.05\times$–$1.50\times$), texture repeat X/Y ($1.0\times$–$6.0\times$), surface roughness, and metalness.
+
+### 2. 🎵 Atmospheric Audio Synthesizer & Sound FX (Sound Tab)
+- **Ambient Weather Audio**: Procedural ambient sound loops for Sakura Blossom Rain and Winter Snowfall.
+- **Rhythmic Drum Synthesizer**: 16-step upbeat rhythm generator.
+- **Atmosphere Synchronization**: Automatic audio track playback synced with active atmosphere particle toggles.
+- **Interactive SFX**: Mascot click interaction audio and physics collision bounce sound effects.
+
+### 3. 🌸 Atmosphere & Visual FX (Atmosphere Tab)
+- **3D Sakura Petal Rain & Snow Simulation**: Real-time particle systems featuring curved petal geometry, natural tumbling aerodynamics, sinusoidal breeze drift, and viewport boundary wrapping.
 - **Dedicated Atmosphere Tab**: Complete ambient controls and effect toggles organized cleanly in the Studio Suite navigation bar.
 
-### 2. 🌀 Performance & Motion Diagnostics (Motion Tab)
+### 4. 🌀 Performance & Motion Diagnostics (Motion Tab)
 The **Motion & Spin** tab includes a built-in real-time diagnostics dashboard:
 - **Live Rendering FPS**: Smoothly computes actual viewport frame rate against target FPS with an adaptive health badge (`OPTIMAL 🟢`, `NORMAL 🟡`, `THROTTLED 🟠`).
 - **Frame Render Latency**: Displays millisecond render time per frame (`ms`) with an animated gauge.
@@ -91,19 +104,19 @@ The **Motion & Spin** tab includes a built-in real-time diagnostics dashboard:
 - **V8 Heap Memory Usage**: Real-time Chromium/V8 heap memory allocation tracking (`usedMB / totalMB`).
 - **Dynamic Battery Saver**: Configurable frame rate throttling when idle or unfocused.
 
-### 3. 🎯 Real-Time Model Loading & Animation Synchronization (Display Tab)
+### 5. 🎯 Real-Time Model Loading & Animation Synchronization (Display Tab)
 - **Instant Thumbnail Selection**: Clicking any model card in the Settings panel immediately loads the 3D asset into the active viewport with monotonic race-condition protection (`loadToken`).
 - **Dynamic Animation List**: Automatically queries and populates all skeletal animation clips built into imported `.glb` / `.gltf` files (`<select id="anim-select">`) and immediately plays the chosen loop.
 
-### 4. 🔦 Multi-Source Stage Lighting & 3D Preview (Lighting Tab)
+### 6. 🔦 Multi-Source Stage Lighting & 3D Preview (Lighting Tab)
 - **Dynamic Spotlights**: Add, colorize, and position multi-source spotlight cones in 3D space with helper rays and real-time intensity dials.
 - **Lighting Presets**: Instant one-click presets including *Dual Concert Lights* and *Dark Stage Mode*.
 - **Interactive 3D Preview Viewport**: Secondary offscreen WebGL renderer with Front, Top, Iso camera views and zoom controls.
 
-### 5. ⚡ Momentum Physics Engine (Physics Tab)
+### 7. ⚡ Momentum Physics Engine (Physics Tab)
 - **Interactive Throwing**: Hold **D + Left Mouse Drag** to throw the mascot across your desktop with realistic momentum, gravitational acceleration, and ground landing bounce dynamics.
 
-### 6. 📐 60 FPS Direction-Aware Window Edge Resizing
+### 8. 📐 60 FPS Direction-Aware Window Edge Resizing
 - **`requestAnimationFrame` Throttling**: Eliminates event-loop congestion and frame drops during window edge dragging.
 - **Direction-Aware Anchoring**: Pulling East/South edges smoothly resizes window bounds without erratic coordinate jitter, while West/North pulls dynamically track cursor displacement.
 
@@ -117,7 +130,7 @@ Launch the application in development mode:
 npm start
 ```
 
-### 2. Run Automated Unit Test Suite (4 Test Suites)
+### 2. Run Automated Unit Test Suite (9 Test Suites)
 Run the automated unit tests covering all core systems:
 ```bash
 # Standard Command Prompt / Bash:
@@ -131,6 +144,11 @@ The test runner validates:
 2. **PhysicsEngine**: Kinematic integration, velocity dampening, and boundary collision response.
 3. **12-Locale Parity**: 100% key existence across all 12 language dictionaries (`locales/*/translation.json`).
 4. **AppStore**: Reactive proxy mutations, subscriber callback notifications, and batch state changes.
+5. **GPUAssetManager**: Recursive geometry/texture GPU memory disposal and VRAM leak prevention.
+6. **Electron Security & Preload Bridge**: Context isolation and idle FPS throttling configuration.
+7. **SoundManager**: Master & track volume clamping, snapshot state retrieval, and atmosphere audio sync.
+8. **FlagMeshBuilder & Cloth Wave Simulation**: Procedural flag presets, vertex array deformation, and normal recalculations.
+9. **SettingsManager Texture Configuration**: Custom texture paths, flag presets, wind physics, and surface shader parameters.
 
 ### 3. Build Standalone Production Executable
 To package the app into a standalone Windows executable binary (`DesktopPet.exe` inside `DesktopPet-win32-x64/`):
@@ -188,11 +206,14 @@ src/
 ├── core/                       <-- 3D WebGL & Application Core
 │   ├── AnimationLoopManager.js <-- Main RAF render loop manager
 │   ├── AppInitializer.js       <-- Application bootstrap & WebGL setup
+│   ├── FlagMeshBuilder.js      <-- Native 3D Flag mesh, procedural textures & wave physics
 │   ├── LightingManager.js      <-- Multi-source stage spotlight controls
 │   ├── MascotBuilder.js        <-- Procedural 3D mesh fallback builder
-│   ├── ModelLoader.js          <-- GLTF/GLB asset importer & monotonic token parser
+│   ├── MascotInteractionHandler.js <-- Procedural animations & interaction SFX
+│   ├── ModelLoader.js          <-- GLTF/GLB & native mesh loader with race protection
 │   ├── SakuraRainManager.js    <-- 3D Cherry blossom petal rain particle engine
-│   └── ...
+│   ├── SnowFallManager.js      <-- 3D Winter snowflake particle engine
+│   └── SoundManager.js         <-- Web Audio API synthesizer, ambient loops & SFX
 ├── managers/                   <-- State & Persistence Managers
 │   ├── AppStore.js             <-- Reactive Proxy state store with subscriber system
 │   └── SettingsManager.js      <-- Atomic settings JSON staging & config healing
@@ -204,10 +225,11 @@ src/
     ├── PreviewGenerator.js     <-- Isolated 3D thumbnail generation & mascot cards
     ├── PreviewViewportEngine.js<-- Secondary WebGL preview canvas renderer
     ├── SettingsPanelResizeHandler.js <-- 60 FPS direction-aware edge resize handler
-    ├── SettingsPanelUI.js      <-- 7-tab studio control suite UI
+    ├── SettingsPanelUI.js      <-- Studio control suite UI
+    ├── SoundTabUI.js           <-- Ambient audio tracks, volume dials & atmosphere sync
     ├── SpotlightCardsUI.js     <-- Real-time spotlight card visualizers
     ├── StudioTabManager.js     <-- Studio tab router & scroll arrow navigation
-    └── ...
+    └── TextureTabUI.js         <-- Custom texture dropzone, flag presets & shader dials
 ```
 
 ---

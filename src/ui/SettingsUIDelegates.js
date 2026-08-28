@@ -51,6 +51,7 @@ export function createSettingsUIDelegates(deps) {
         updateIgnoreMouseState,
         applySelectedAnimation,
         fallbackToProcedural,
+        loadFlagModel: deps.loadFlagModel,
         loadCustomModel,
         getAssetsPath,
         path,
