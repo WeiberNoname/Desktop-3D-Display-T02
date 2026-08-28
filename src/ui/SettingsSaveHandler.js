@@ -98,6 +98,8 @@ export async function handleSaveSettings(deps) {
   currentSettings.viewOnly = viewOnlyCheck.checked;
   const sakuraRainDom = deps.sakuraRainCheck || document.getElementById('sakura-rain');
   if (sakuraRainDom) currentSettings.sakuraRain = sakuraRainDom.checked;
+  const snowFallDom = deps.snowFallCheck || document.getElementById('snow-fall');
+  if (snowFallDom) currentSettings.snowFall = snowFallDom.checked;
 
   if (enablePhysicsCheck) currentSettings.enablePhysics = enablePhysicsCheck.checked;
   if (physicsFloorCheck) currentSettings.physicsFloor = physicsFloorCheck.checked;

@@ -128,6 +128,8 @@ export function syncSlidersUI(deps) {
   if (viewOnlyCheck) viewOnlyCheck.checked = currentSettings.viewOnly;
   const sakuraRainDom = deps.sakuraRainCheck || document.getElementById('sakura-rain');
   if (sakuraRainDom) sakuraRainDom.checked = currentSettings.sakuraRain !== false;
+  const snowFallDom = deps.snowFallCheck || document.getElementById('snow-fall');
+  if (snowFallDom) snowFallDom.checked = currentSettings.snowFall === true;
   if (enablePhysicsCheck) enablePhysicsCheck.checked = currentSettings.enablePhysics;
   if (physicsFloorCheck) physicsFloorCheck.checked = currentSettings.physicsFloor;
   if (physicsGravitySlider) physicsGravitySlider.value = currentSettings.physicsGravity;

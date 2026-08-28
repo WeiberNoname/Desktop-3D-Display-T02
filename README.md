@@ -212,11 +212,3 @@ src/
 
 ---
 
-## 🤖 AI Companion Readiness & Expansion Roadmap
-
-While Desktop Pet is currently a 100% deterministic 3D desktop graphics engine, its decoupled IPC architecture, transparent overlay, dynamic GLTF animation mixer, and WebGL rendering pipeline serve as an ideal foundation for an **AI Agent Companion Avatar**:
-
-- **Phase 1 (Conversational Brain)**: Connect local LLM servers (e.g. Ollama, Llama.cpp) or Cloud APIs (Gemini, OpenAI) for dialogue.
-- **Phase 2 (Voice & Lip-Sync)**: Integrate Whisper STT and Kokoro/Piper TTS with Three.js morph-target viseme animation drivers.
-- **Phase 3 (Vision Perception)**: Implement periodic desktop screen capture via Electron `desktopCapturer` passed to Vision-Language Models (VLMs).
-- **Phase 4 (Autonomous Agent Loop)**: Replace fixed bobbing with an AI emotional state machine and desktop tool-calling capabilities.

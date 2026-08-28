@@ -107,6 +107,7 @@ export async function initializeApp(deps) {
   if (callbacks.updateStageLighting) callbacks.updateStageLighting();
   if (callbacks.updateSpotlightPosition) callbacks.updateSpotlightPosition();
   if (callbacks.initSakuraRain) callbacks.initSakuraRain();
+  if (callbacks.initSnowFall) callbacks.initSnowFall();
 
   // Auto-detect custom asset or load procedural mascot
   if (callbacks.detectAndLoadAsset) callbacks.detectAndLoadAsset();

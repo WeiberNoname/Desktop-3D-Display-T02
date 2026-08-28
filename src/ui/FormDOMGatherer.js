@@ -27,6 +27,7 @@ export function gatherSettingsFormElements() {
     lockPositionCheck: document.getElementById('lock-position'),
     viewOnlyCheck: document.getElementById('view-only'),
     sakuraRainCheck: document.getElementById('sakura-rain'),
+    snowFallCheck: document.getElementById('snow-fall'),
     enablePhysicsCheck: document.getElementById('enable-physics'),
     physicsFloorCheck: document.getElementById('physics-floor'),
     physicsGravitySlider: document.getElementById('physics-gravity'),

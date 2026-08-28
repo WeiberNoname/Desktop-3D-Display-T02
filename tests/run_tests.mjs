@@ -13,11 +13,13 @@ assert.strictEqual(defaults.targetFps, 60, 'Default targetFps should be 60');
 assert.strictEqual(defaults.language, 'en', 'Default language should be en');
 assert.strictEqual(defaults.activeModel, 'procedural', 'Default activeModel should be procedural');
 assert.strictEqual(defaults.sakuraRain, true, 'Default sakuraRain should be true');
+assert.strictEqual(defaults.snowFall, false, 'Default snowFall should be false');
 assert.strictEqual(defaults.dynamicBatterySaver, false, 'Default dynamicBatterySaver should be false');
 
-const merged = SettingsManager.mergeWithDefaults({ scale: 2.5, targetFps: 120, customKey: 'test' });
+const merged = SettingsManager.mergeWithDefaults({ scale: 2.5, targetFps: 120, customKey: 'test', snowFall: true });
 assert.strictEqual(merged.scale, 2.5, 'Scale should be overridden to 2.5');
 assert.strictEqual(merged.targetFps, 120, 'targetFps should be overridden to 120');
+assert.strictEqual(merged.snowFall, true, 'snowFall should be overridden to true');
 assert.strictEqual(merged.width, 350, 'Unspecified width should fallback to 350');
 assert.strictEqual(merged.activeModel, 'procedural', 'Fallback activeModel should be procedural');
 console.log('✅ SettingsManager tests PASSED.');
@@ -56,6 +58,8 @@ supportedLangs.forEach(lang => {
   const content = JSON.parse(fs.readFileSync(filePath, 'utf8'));
   assert.strictEqual(typeof content.default_mascot, 'string', `${lang} must contain default_mascot translation`);
   assert.strictEqual(content.default_mascot.length > 0, true, `${lang} default_mascot must not be empty`);
+  assert.strictEqual(typeof content.snow_fall, 'string', `${lang} must contain snow_fall translation`);
+  assert.strictEqual(content.snow_fall.length > 0, true, `${lang} snow_fall must not be empty`);
 });
 console.log('✅ 12-Locale Key Parity tests PASSED.');
 
